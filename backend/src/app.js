@@ -16,7 +16,11 @@ const PORT = process.env.PORT || 5050;
 app.use(cors());
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, "../../frontend/build")));
+app.use(
+  express.static(
+    path.join(__dirname, "../../../educaiCRM-Front/frontend/build")
+  )
+);
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -27,7 +31,9 @@ app.use("/api/data", dataApi);
 
 // Serve the React app
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../frontend/build/index.html"));
+  res.sendFile(
+    path.join(__dirname, "../../../educaiCRM-Front/frontend/build/index.html")
+  );
 });
 
 app.listen(PORT, () => {
