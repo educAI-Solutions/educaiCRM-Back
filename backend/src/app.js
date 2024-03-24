@@ -2,15 +2,27 @@ const express = require("express");
 const dotenv = require("dotenv");
 const path = require("path");
 const cors = require("cors");
-
-// Import APIs
-const authApi = require("./apis/authApi");
-const dataApi = require("./apis/dataApi");
+const mongoose = require("mongoose");
+const authRoutes = require("./routes/authRoutes");
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5050;
+const mongo_login_string = process.env.mongo_login_string;
+
+// Connect to MongoDB
+mongoose
+  .connect(mongo_login_string, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch((error) => {
+    console.error("MongoDB connection error:", error);
+  });
 
 // Enable CORS
 app.use(cors());
@@ -26,8 +38,7 @@ app.use(
 app.use(express.json());
 
 // API routes
-app.use("/api/auth", authApi);
-app.use("/api/data", dataApi);
+app.use("/api/auth", authRoutes);
 
 // Serve the React app
 app.get("*", (req, res) => {
