@@ -11,6 +11,31 @@ async function createAccount(username, email, password, role = "user") {
   }
 }
 
+// Update account
+async function updateAccount(id, newUsername, newEmail, newPassword, newRole) {
+  try {
+    const account = await Account.findById(id);
+    account.username = newUsername;
+    account.email = newEmail;
+    account.password = newPassword;
+    account.role = newRole;
+    const updatedAccount = await account.save();
+    console.log("Account updated:", updatedAccount);
+  } catch (error) {
+    console.error("Error updating account:", error);
+  }
+}
+
+// deleteAccount
+async function deleteAccount(id) {
+  try {
+    const account = await Account.findByIdAndDelete(id);
+    console.log("Account deleted:", account);
+  } catch (error) {
+    console.error("Error deleting account:", error);
+  }
+}
+
 async function getAccounts() {
   try {
     const accounts = await Account.find();
@@ -30,20 +55,10 @@ async function getAccountById(id) {
   }
 }
 
-// Usage
-async function main() {
-  // Create an account
-  await createAccount("john_doe", "john@example.com", "password123");
-
-  // Get all accounts
-  await getAccounts();
-
-  // Get an account by ID
-  await getAccountById(randomId);
-}
-
 module.exports = {
   createAccount,
   getAccounts,
   getAccountById,
+  updateAccount,
+  deleteAccount,
 };
