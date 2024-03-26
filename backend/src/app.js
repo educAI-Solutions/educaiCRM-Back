@@ -25,7 +25,12 @@ mongoose
   });
 
 // Enable CORS
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
 
 // Serve static files from the React app
 app.use(
