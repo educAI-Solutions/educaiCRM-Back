@@ -13,10 +13,7 @@ const mongo_login_string = process.env.mongo_login_string;
 
 // Connect to MongoDB
 mongoose
-  .connect(mongo_login_string, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(mongo_login_string, {})
   .then(() => {
     console.log("Connected to MongoDB");
   })

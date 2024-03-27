@@ -1,9 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
+const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 const { createAccount } = require("../controllers/accountController");
 const Account = require("../models/accountModel");
+
+dotenv.config();
+// Get the secret key from the environment variables
+const secretKey = process.env.ACCESS_TOKEN_SECRET;
 
 // Register route
 router.post("/register", async (req, res) => {
@@ -40,17 +45,20 @@ router.post("/register", async (req, res) => {
 // Login route
 router.post("/login", async (req, res) => {
   // Get username and password from request body
-  const { username, password } = req.body;
+  const { identifier, password } = req.body;
 
   try {
     // Find the user by username
-    const user = await Account.findOne({ username });
+    const user = await Account.findOne({
+      $or: [{ username: identifier }, { email: identifier }],
+    });
 
     if (!user) {
       // User not found
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid username or password" });
+      return res.status(401).json({
+        success: false,
+        message: "Invalid username/email or password",
+      });
     }
 
     // Compare passwords
@@ -60,19 +68,27 @@ router.post("/login", async (req, res) => {
       // Passwords do not match
       return res
         .status(401)
-        .json({ success: false, message: "Invalid username or password" });
+        .json({
+          success: false,
+          message: "Invalid username/email or password",
+        });
     }
 
+    // get the role and _id of the user
+    const username = user.username;
+    const role = user.role;
+    const id = user._id;
+
     // Passwords match, generate JWT token
-    const token = jwt.sign({ username }, "secretKey", { expiresIn: "1h" });
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Login successful",
-        token,
-        role: user.role,
-      });
+    const token = jwt.sign({ username, role }, secretKey, {
+      expiresIn: "30m",
+    });
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      token,
+      role: user.role,
+    });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ success: false, message: "Internal server error" });

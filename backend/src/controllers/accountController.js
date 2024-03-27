@@ -1,7 +1,7 @@
 // Import necessary modules
 const Account = require("../models/accountModel");
 
-async function createAccount(username, email, password, role = "user") {
+async function createAccount(username, email, password, role = "student") {
   try {
     const account = new Account({ username, email, password, role });
     const savedAccount = await account.save();
