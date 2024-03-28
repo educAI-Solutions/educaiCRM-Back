@@ -66,12 +66,10 @@ router.post("/login", async (req, res) => {
 
     if (!passwordMatch) {
       // Passwords do not match
-      return res
-        .status(401)
-        .json({
-          success: false,
-          message: "Invalid username/email or password",
-        });
+      return res.status(401).json({
+        success: false,
+        message: "Invalid username/email or password",
+      });
     }
 
     // get the role and _id of the user
