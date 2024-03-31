@@ -13,7 +13,23 @@ const secretKey = process.env.ACCESS_TOKEN_SECRET;
 // Register route
 router.post("/register", async (req, res) => {
   // Get username, email, and password from request body
+  const token = req.headers.authorization.split(" ")[1];
+  console.log(token);
   const { username, email, password, role } = req.body;
+
+  try {
+    const user = jwt.verify(token, secretKey);
+    if (user.role !== "admin") {
+      return res
+        .status(401)
+        .json({ success: false, message: "Unauthorized access" });
+    }
+  } catch (error) {
+    console.error("Token error:", error);
+    return res
+      .status(401)
+      .json({ success: false, message: "Unauthorized access" });
+  }
 
   try {
     // Check if the username or email already exists
@@ -85,7 +101,6 @@ router.post("/login", async (req, res) => {
       success: true,
       message: "Login successful",
       token,
-      role: user.role,
     });
   } catch (error) {
     console.error("Login error:", error);
