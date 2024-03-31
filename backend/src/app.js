@@ -4,6 +4,7 @@ const path = require("path");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const authRoutes = require("./routes/authRoutes");
+const utilRoutes = require("./routes/utilRoutes");
 
 dotenv.config();
 
@@ -39,8 +40,11 @@ app.use(
 // Middleware to parse JSON bodies
 app.use(express.json());
 
-// API routes
+// API Auth routes
 app.use("/api/auth", authRoutes);
+
+// API Util routes
+app.use("/api/util", utilRoutes);
 
 // Serve the React app
 app.get("*", (req, res) => {
