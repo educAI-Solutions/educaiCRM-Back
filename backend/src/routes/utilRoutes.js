@@ -1,9 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
-const { createAccount } = require("../controllers/accountController");
 const Account = require("../models/accountModel");
 
 dotenv.config();

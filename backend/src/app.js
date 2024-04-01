@@ -5,6 +5,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const authRoutes = require("./routes/authRoutes");
 const utilRoutes = require("./routes/utilRoutes");
+const courseRoutes = require("./routes/courseRoutes");
 
 dotenv.config();
 
@@ -45,6 +46,9 @@ app.use("/api/auth", authRoutes);
 
 // API Util routes
 app.use("/api/util", utilRoutes);
+
+// API Course routes
+app.use("/api/courses", courseRoutes);
 
 // Serve the React app
 app.get("*", (req, res) => {
