@@ -11,8 +11,6 @@ async function main() {
     const AZURE_STORAGE_CONNECTION_STRING =
       process.env.AZURE_STORAGE_CONNECTION_STRING;
 
-    console.log(AZURE_STORAGE_CONNECTION_STRING);
-
     if (!AZURE_STORAGE_CONNECTION_STRING) {
       throw Error("Azure Storage Connection string not found");
     }
@@ -23,19 +21,11 @@ async function main() {
     );
 
     // Create a unique name for the container
-    const containerName = "quickstart" + uuidv1();
-
-    console.log("\nCreating container...");
-    console.log("\t", containerName);
+    const containerName = "justificaciones";
 
     // Get a reference to a container
     const containerClient = blobServiceClient.getContainerClient(containerName);
     // Create the container
-    const createContainerResponse = await containerClient.create();
-    console.log(
-      `Container was created successfully.\n\trequestId:${createContainerResponse.requestId}\n\tURL: ${containerClient.url}`
-    );
-
     // Create a unique name for the blob
     const blobName = "quickstart" + uuidv1() + ".txt";
 
