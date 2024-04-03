@@ -20,4 +20,4 @@ const Class = mongoose.model("Class", classSchema);
 
 module.exports = Class;
 
-// Ademas del curso, añadir programas curriculares como padre de cursos.
+// Ademas del curso, añadir programas curriculares como padre de cursos. Añadir un campo de programa curricular.
