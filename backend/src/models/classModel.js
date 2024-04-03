@@ -19,3 +19,5 @@ const classSchema = new mongoose.Schema({
 const Class = mongoose.model("Class", classSchema);
 
 module.exports = Class;
+
+// Ademas del curso, añadir programas curriculares como padre de cursos.
