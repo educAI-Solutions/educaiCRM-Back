@@ -4,14 +4,54 @@ const { Readable } = require("stream");
 require("dotenv").config();
 
 const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
-const containerName = "justificaciones";
 
 const blobServiceClient =
   BlobServiceClient.fromConnectionString(connectionString);
-const containerClient = blobServiceClient.getContainerClient(containerName);
 
-exports.uploadFile = async (req, res) => {
+exports.uploadAttendance = async (req, res) => {
   try {
+    const containerClient = blobServiceClient.getContainerClient("attendance");
+    const file = req.file;
+    // save the original file extension
+    // use uuid to generate a unique name for the file and add the original extension
+    const blobName = `${uuidv1()}${file.originalname}`;
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    const stream = file.buffer;
+    console.log(`Uploading file: ${file.originalname}`);
+    const fileStream = Readable.from(stream);
+    await blockBlobClient.uploadStream(fileStream, file.size);
+    console.log(`File uploaded: ${file.originalname}`);
+    res.status(200).send("File uploaded successfully");
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    res.status(500).send("Internal server error");
+  }
+};
+
+exports.uploadJustifications = async (req, res) => {
+  try {
+    const containerClient =
+      blobServiceClient.getContainerClient("justifications");
+    const file = req.file;
+    // save the original file extension
+    // use uuid to generate a unique name for the file and add the original extension
+    const blobName = `${uuidv1()}${file.originalname}`;
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    const stream = file.buffer;
+    console.log(`Uploading file: ${file.originalname}`);
+    const fileStream = Readable.from(stream);
+    await blockBlobClient.uploadStream(fileStream, file.size);
+    console.log(`File uploaded: ${file.originalname}`);
+    res.status(200).send("File uploaded successfully");
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    res.status(500).send("Internal server error");
+  }
+};
+
+exports.uploadRules = async (req, res) => {
+  try {
+    const containerClient = blobServiceClient.getContainerClient("rules");
     const file = req.file;
     // save the original file extension
     // use uuid to generate a unique name for the file and add the original extension
