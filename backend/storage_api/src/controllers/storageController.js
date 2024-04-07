@@ -71,6 +71,7 @@ exports.uploadRules = async (req, res) => {
 
 exports.downloadFile = async (req, res) => {
   try {
+    const containerClient = blobServiceClient.getContainerClient("attendance");
     const filename = req.params.filename;
     const blockBlobClient = containerClient.getBlockBlobClient(filename);
     const downloadResponse = await blockBlobClient.download();
