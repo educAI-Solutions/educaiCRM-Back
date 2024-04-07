@@ -74,9 +74,16 @@ exports.downloadFile = async (req, res) => {
     const containerClient = blobServiceClient.getContainerClient("attendance");
     const filename = req.params.filename;
     const blockBlobClient = containerClient.getBlockBlobClient(filename);
+
+    // Download the file as a stream
     const downloadResponse = await blockBlobClient.download();
-    const content = await streamToString(downloadResponse.readableStreamBody);
-    res.status(200).send(content);
+
+    // Set the appropriate headers for binary data
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+
+    // Pipe the file stream to the response
+    downloadResponse.readableStreamBody.pipe(res);
   } catch (error) {
     console.error("Error downloading file:", error);
     res.status(500).send("Internal server error");
