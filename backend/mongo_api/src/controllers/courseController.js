@@ -10,10 +10,20 @@ exports.createCourse = async (req, res) => {
     participants,
     startDate,
     endDate,
+    program,
+    classes,
   } = req.body;
 
   try {
-    // Make sure the course code is unique
+    // Make sure the course code + section combination is unique
+    const existingCourse = await Course.findOne({ courseCode, section });
+
+    if (existingCourse) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Course already exists" });
+    }
+
     const course = await Course.create({
       courseName,
       courseCode,
@@ -22,6 +32,8 @@ exports.createCourse = async (req, res) => {
       participants,
       startDate,
       endDate,
+      program,
+      classes,
     });
     res.status(201).json({ success: true, data: course });
   } catch (error) {
@@ -33,8 +45,10 @@ exports.createCourse = async (req, res) => {
 // Get all courses
 exports.getCourses = async (req, res) => {
   try {
-    //Gets all the courses and populates the instructors and participants fields because they are list of ObjectIds that reference the User model
-    const courses = await Course.find().populate("instructors participants");
+    //Gets all the courses and populates the instructors, participants, prgram and classes fields
+    const courses = await Course.find().populate(
+      "instructors participants program classes"
+    );
     // Remove passwords from the instructors and participants
     courses.forEach((course) => {
       course.instructors.forEach((instructor) => {
@@ -56,7 +70,7 @@ exports.getCourseById = async (req, res) => {
   const { id } = req.params;
   try {
     const course = await Course.findById(id).populate(
-      "instructors participants"
+      "instructors participants program classes"
     );
     if (!course) {
       return res
@@ -83,7 +97,7 @@ exports.updateCourse = async (req, res) => {
   try {
     const course = await Course.findByIdAndUpdate(id, req.body, {
       new: true,
-    }).populate("instructors participants");
+    }).populate("instructors participants program classes");
     if (!course) {
       return res
         .status(404)

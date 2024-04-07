@@ -6,6 +6,8 @@ const mongoose = require("mongoose");
 const authRoutes = require("./routes/authRoutes");
 const utilRoutes = require("./routes/utilRoutes");
 const courseRoutes = require("./routes/courseRoutes");
+const classRoutes = require("./routes/classRoutes");
+const programRoutes = require("./routes/programRoutes");
 
 dotenv.config();
 
@@ -47,8 +49,14 @@ app.use("/api/auth", authRoutes);
 // API Util routes
 app.use("/api/util", utilRoutes);
 
+// API Program routes
+app.use("/api/programs", programRoutes);
+
 // API Course routes
 app.use("/api/courses", courseRoutes);
+
+// API Class routes
+app.use("/api/classes", classRoutes);
 
 // Serve the React app
 app.get("*", (req, res) => {

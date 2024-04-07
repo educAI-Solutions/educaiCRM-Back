@@ -1,5 +1,8 @@
-// Import necessary modules
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const Account = require("../models/accountModel");
+require("dotenv").config();
+const secretKey = process.env.ACCESS_TOKEN_SECRET;
 
 async function createAccount(username, email, password, role = "student") {
   try {
@@ -11,54 +14,157 @@ async function createAccount(username, email, password, role = "student") {
   }
 }
 
-// Update account
-async function updateAccount(id, newUsername, newEmail, newPassword, newRole) {
-  try {
-    const account = await Account.findById(id);
-    account.username = newUsername;
-    account.email = newEmail;
-    account.password = newPassword;
-    account.role = newRole;
-    const updatedAccount = await account.save();
-    console.log("Account updated:", updatedAccount);
-  } catch (error) {
-    console.error("Error updating account:", error);
-  }
-}
+exports.registerUser = async (req, res) => {
+  // Get username, email, and password from request body
+  const { username, email, password, role } = req.body;
 
-// deleteAccount
-async function deleteAccount(id) {
   try {
-    const account = await Account.findByIdAndDelete(id);
-    console.log("Account deleted:", account);
-  } catch (error) {
-    console.error("Error deleting account:", error);
-  }
-}
+    // Check if the username or email already exists
+    const existingUser = await Account.findOne({
+      $or: [{ username }, { email }],
+    });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Username or email already exists" });
+    }
 
-async function getAccounts() {
+    // Hash the password (Change this to frontend for extra security later)
+    const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
+
+    // Create a new account
+    await createAccount(username, email, hashedPassword, role);
+
+    // Account created successfully
+    res
+      .status(201)
+      .json({ success: true, message: "Account created successfully" });
+  } catch (error) {
+    console.error("Registration error:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+exports.getUserDetails = async (req, res) => {
+  const { username } = req.params;
+
   try {
-    const accounts = await Account.find();
-    console.log("Accounts:", accounts);
-    randomId = accounts[0]._id;
-  } catch (error) {
-    console.error("Error fetching accounts:", error);
-  }
-}
+    // Find the user by username
+    const user = await Account.findOne({ username });
 
-async function getAccountById(id) {
+    if (!user) {
+      // User not found
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    console.error("Profile error:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+exports.loginUser = async (req, res) => {
+  // Get username and password from request body
+  const { identifier, password } = req.body;
+
   try {
-    const account = await Account.findById(id);
-    console.log("Account:", account);
-  } catch (error) {
-    console.error("Error fetching account by ID:", error);
-  }
-}
+    // Find the user by username
+    const user = await Account.findOne({
+      $or: [{ username: identifier }, { email: identifier }],
+    });
 
-module.exports = {
-  createAccount,
-  getAccounts,
-  getAccountById,
-  updateAccount,
-  deleteAccount,
+    if (!user) {
+      // User not found
+      return res.status(401).json({
+        success: false,
+        message: "Invalid username/email or password",
+      });
+    }
+
+    // Compare passwords
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      // Passwords do not match
+      return res.status(401).json({
+        success: false,
+        message: "Invalid username/email or password",
+      });
+    }
+
+    // get the role and _id of the user
+    const username = user.username;
+    const role = user.role;
+    const id = user._id;
+
+    // Passwords match, generate JWT token
+    const token = jwt.sign({ username, role }, secretKey, {
+      expiresIn: "1h",
+    });
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      token,
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+exports.updateUser = async (req, res) => {
+  const { username } = req.params;
+  const { email, password } = req.body;
+
+  try {
+    // Find the user by username
+    const user = await Account.findOne({ username });
+
+    if (!user) {
+      // User not found
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    // Update user's email and password
+    if (email) user.email = email;
+    if (password) user.password = await bcrypt.hash(password, 10);
+
+    // Save the updated user
+    await user.save();
+
+    res
+      .status(200)
+      .json({ success: true, message: "User updated successfully" });
+  } catch (error) {
+    console.error("Update error:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  const { username } = req.params;
+
+  try {
+    // Find and delete the user by username
+    const deletedUser = await Account.findOneAndDelete({ username });
+
+    if (!deletedUser) {
+      // User not found
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    res
+      .status(200)
+      .json({ success: true, message: "User deleted successfully" });
+  } catch (error) {
+    console.error("Delete error:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
 };
