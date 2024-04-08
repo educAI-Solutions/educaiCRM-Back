@@ -1,4 +1,5 @@
 const Course = require("../models/courseModel");
+const Program = require("../models/programModel");
 
 // Create a new course
 exports.createCourse = async (req, res) => {
@@ -7,7 +8,6 @@ exports.createCourse = async (req, res) => {
     courseCode,
     section,
     instructors,
-    participants,
     startDate,
     endDate,
     program,
@@ -23,6 +23,19 @@ exports.createCourse = async (req, res) => {
         .status(400)
         .json({ success: false, error: "Course already exists" });
     }
+
+    // Get the program to populate participants
+    const programInfo = await Program.findById(program).populate(
+      "participants"
+    );
+
+    if (!programInfo) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Program not found" });
+    }
+
+    const participants = programInfo.participants;
 
     const course = await Course.create({
       courseName,

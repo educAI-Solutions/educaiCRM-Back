@@ -3,8 +3,13 @@ const Program = require("../models/programModel");
 // Controller methods for curricular programs
 exports.createProgram = async (req, res) => {
   try {
-    const { name, description, courses } = req.body;
-    const newProgram = new Program({ name, description, courses });
+    const { name, description, courses, participants } = req.body;
+    const newProgram = new Program({
+      name,
+      description,
+      courses,
+      participants,
+    });
     await newProgram.save();
     res.status(201).json({
       success: true,
@@ -20,7 +25,9 @@ exports.createProgram = async (req, res) => {
 exports.getProgramById = async (req, res) => {
   try {
     const { id } = req.params;
-    const foundProgram = await Program.findById(id).populate("courses");
+    const foundProgram = await Program.findById(id).populate(
+      "courses participants"
+    );
     if (!foundProgram) {
       return res
         .status(404)

@@ -1,6 +1,5 @@
 const Class = require("../models/classModel");
 const Course = require("../models/courseModel");
-const Account = require("../models/accountModel");
 
 // Controller methods for classes
 exports.createClass = async (req, res) => {
