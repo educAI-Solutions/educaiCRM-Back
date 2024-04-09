@@ -38,7 +38,11 @@ router.put(
 
 // Delete route
 router.delete(
+<<<<<<< HEAD
   "/delete/:username",
+=======
+  "/delete/:id",
+>>>>>>> ES-55-Funcionalidad-de-CRUD-de-Clases
   // authenticateJWT,
   // checkAdmin,
   accountController.deleteUser

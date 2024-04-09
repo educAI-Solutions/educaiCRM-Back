@@ -10,7 +10,11 @@ const classSchema = new mongoose.Schema({
   instructors: [{ type: mongoose.Schema.Types.ObjectId, ref: "Account" }],
   participants: [
     {
+<<<<<<< HEAD
       student: { type: mongoose.Schema.Types.ObjectId, ref: "Account" },
+=======
+      participant: { type: mongoose.Schema.Types.ObjectId, ref: "Account" },
+>>>>>>> ES-55-Funcionalidad-de-CRUD-de-Clases
       attended: { type: Boolean, default: false },
     },
   ],

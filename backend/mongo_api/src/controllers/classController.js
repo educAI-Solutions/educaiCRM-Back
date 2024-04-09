@@ -11,11 +11,20 @@ exports.createClass = async (req, res) => {
       .populate("participants")
       .populate("instructors");
 
+<<<<<<< HEAD
+=======
+    console.log(courseData);
+    console.log(courseData.participants[0]._id);
+>>>>>>> ES-55-Funcionalidad-de-CRUD-de-Clases
     // Create participants array
     const participants = courseData.participants.map((participant) => ({
       participant: participant._id,
       attended: false,
     }));
+<<<<<<< HEAD
+=======
+    console.log(participants);
+>>>>>>> ES-55-Funcionalidad-de-CRUD-de-Clases
 
     // Create instructors array
     const instructors = courseData.instructors.map(
@@ -35,6 +44,15 @@ exports.createClass = async (req, res) => {
 
     await newClass.save();
 
+<<<<<<< HEAD
+=======
+    // Add the class to the parent course's class list
+    await Course.updateOne(
+      { _id: course },
+      { $push: { classes: newClass._id } }
+    );
+
+>>>>>>> ES-55-Funcionalidad-de-CRUD-de-Clases
     res.status(201).json({
       success: true,
       message: "Class created successfully",
@@ -55,6 +73,13 @@ exports.getClassById = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Class not found" });
     }
+<<<<<<< HEAD
+=======
+    // remove the password field from each user
+    foundClass.instructors.forEach((instructor) => {
+      instructor.password = undefined;
+    });
+>>>>>>> ES-55-Funcionalidad-de-CRUD-de-Clases
     res.status(200).json({ success: true, data: foundClass });
   } catch (error) {
     console.error("Error getting class by ID:", error);
@@ -65,6 +90,15 @@ exports.getClassById = async (req, res) => {
 exports.getAllClasses = async (req, res) => {
   try {
     const allClasses = await Class.find().populate("course instructors");
+<<<<<<< HEAD
+=======
+    // remove the password field from each user
+    allClasses.forEach((classItem) => {
+      classItem.instructors.forEach((instructor) => {
+        instructor.password = undefined;
+      });
+    });
+>>>>>>> ES-55-Funcionalidad-de-CRUD-de-Clases
     res.status(200).json({ success: true, data: allClasses });
   } catch (error) {
     console.error("Error getting all classes:", error);
@@ -96,13 +130,35 @@ exports.updateClass = async (req, res) => {
 
 exports.deleteClass = async (req, res) => {
   try {
+<<<<<<< HEAD
     const { id } = req.params;
     const deletedClass = await Class.findByIdAndDelete(id);
     if (!deletedClass) {
+=======
+    const classId = req.params.id;
+
+    // Find the class
+    const classData = await Class.findById(classId);
+
+    if (!classData) {
+>>>>>>> ES-55-Funcionalidad-de-CRUD-de-Clases
       return res
         .status(404)
         .json({ success: false, message: "Class not found" });
     }
+<<<<<<< HEAD
+=======
+
+    // Remove the class from the parent course
+    await Course.updateOne(
+      { _id: classData.course },
+      { $pull: { classes: classId } }
+    );
+
+    // Delete the class
+    await Class.deleteOne({ _id: classId });
+
+>>>>>>> ES-55-Funcionalidad-de-CRUD-de-Clases
     res
       .status(200)
       .json({ success: true, message: "Class deleted successfully" });
