@@ -4,6 +4,14 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { createAccount } = require("../controllers/accountController");
 const Account = require("../models/accountModel");
+<<<<<<< Updated upstream:backend/src/routes/authRoutes.js
+=======
+const Program = require("../models/programModel");
+const Course = require("../models/courseModel");
+const Class = require("../models/classModel");
+require("dotenv").config();
+const secretKey = process.env.ACCESS_TOKEN_SECRET;
+>>>>>>> Stashed changes:backend/mongo_api/src/controllers/accountController.js
 
 // Register route
 router.post("/register", async (req, res) => {
@@ -126,13 +134,18 @@ router.put("/update/:username", async (req, res) => {
   }
 });
 
+<<<<<<< Updated upstream:backend/src/routes/authRoutes.js
 // Delete route
 router.delete("/delete/:username", async (req, res) => {
   const { username } = req.params;
+=======
+exports.deleteUser = async (req, res) => {
+  const { id } = req.params;
+>>>>>>> Stashed changes:backend/mongo_api/src/controllers/accountController.js
 
   try {
-    // Find and delete the user by username
-    const deletedUser = await Account.findOneAndDelete({ username });
+    // Find and delete the user by id
+    const deletedUser = await Account.findByIdAndDelete(id);
 
     if (!deletedUser) {
       // User not found
@@ -140,6 +153,21 @@ router.delete("/delete/:username", async (req, res) => {
         .status(404)
         .json({ success: false, message: "User not found" });
     }
+
+    // Remove the user from any programs, courses, and classes they are enrolled in
+    await Program.updateMany(
+      { participants: id },
+      { $pull: { participants: id } }
+    );
+    await Course.updateMany(
+      { participants: id },
+      { $pull: { participants: id } }
+    );
+    // show through console.log the classes that are being found by the id
+    await Class.updateMany(
+      { "participants.participant": id },
+      { $pull: { participants: { participant: id } } }
+    );
 
     res
       .status(200)
