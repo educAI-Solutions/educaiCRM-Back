@@ -4,7 +4,7 @@ const path = require("path");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const authRoutes = require("./routes/authRoutes");
-const utilRoutes = require("./routes/utilRoutes");
+const userRoutes = require("./routes/userRoutes");
 const courseRoutes = require("./routes/courseRoutes");
 const classRoutes = require("./routes/classRoutes");
 const programRoutes = require("./routes/programRoutes");
@@ -46,8 +46,8 @@ app.use(express.json());
 // API Auth routes
 app.use("/api/auth", authRoutes);
 
-// API Util routes
-app.use("/api/util", utilRoutes);
+// API User routes
+app.use("/api/user", userRoutes);
 
 // API Program routes
 app.use("/api/programs", programRoutes);

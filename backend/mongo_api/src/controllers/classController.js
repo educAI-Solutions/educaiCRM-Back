@@ -62,6 +62,16 @@ exports.getClassById = async (req, res) => {
   }
 };
 
+exports.getAllClasses = async (req, res) => {
+  try {
+    const allClasses = await Class.find().populate("course instructors");
+    res.status(200).json({ success: true, data: allClasses });
+  } catch (error) {
+    console.error("Error getting all classes:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
 exports.updateClass = async (req, res) => {
   try {
     const { id } = req.params;

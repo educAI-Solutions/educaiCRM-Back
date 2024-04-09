@@ -22,6 +22,22 @@ exports.createProgram = async (req, res) => {
   }
 };
 
+exports.getAllPrograms = async (req, res) => {
+  try {
+    const allPrograms = await Program.find().populate("courses participants");
+    // remove the password field from each user
+    allPrograms.forEach((program) => {
+      program.participants.forEach((participant) => {
+        participant.password = undefined;
+      });
+    });
+    res.status(200).json({ success: true, data: allPrograms });
+  } catch (error) {
+    console.error("Error getting all programs:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
 exports.getProgramById = async (req, res) => {
   try {
     const { id } = req.params;

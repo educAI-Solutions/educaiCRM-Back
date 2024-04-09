@@ -19,23 +19,23 @@ router.post(
   CourseController.createCourse
 );
 router.get(
-  "/fetch-courses",
+  "/get-all",
   //authenticateJWT,
-  CourseController.getCourses
+  CourseController.getAllCourses
 );
 router.get(
-  "/fetch-course/:id",
+  "/get/:id",
   // authenticateJWT,
   CourseController.getCourseById
 );
 router.put(
-  "/update-course/:id",
+  "/update/:id",
   // authenticateJWT,
   // checkTeacherOrAdmin,
   CourseController.updateCourse
 );
 router.delete(
-  "/delete-course/:id",
+  "/delete/:id",
   // authenticateJWT,
   // checkAdmin,
   CourseController.deleteCourse

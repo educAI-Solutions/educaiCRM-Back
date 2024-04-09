@@ -3,20 +3,15 @@ const Program = require("../models/programModel");
 
 // Create a new course
 exports.createCourse = async (req, res) => {
-  const {
-    courseName,
-    courseCode,
-    section,
-    instructors,
-    startDate,
-    endDate,
-    program,
-    classes,
-  } = req.body;
+  const { name, code, section, instructors, startDate, endDate, program } =
+    req.body;
+
+  const classes = [];
+  let participants = [];
 
   try {
     // Make sure the course code + section combination is unique
-    const existingCourse = await Course.findOne({ courseCode, section });
+    const existingCourse = await Course.findOne({ code, section });
 
     if (existingCourse) {
       return res
@@ -24,22 +19,24 @@ exports.createCourse = async (req, res) => {
         .json({ success: false, error: "Course already exists" });
     }
 
-    // Get the program to populate participants
-    const programInfo = await Program.findById(program).populate(
-      "participants"
-    );
+    // Get the program to populate participants if program is not null
+    if (program) {
+      const programInfo = await Program.findById(program).populate(
+        "participants"
+      );
 
-    if (!programInfo) {
-      return res
-        .status(404)
-        .json({ success: false, error: "Program not found" });
+      if (!programInfo) {
+        return res
+          .status(404)
+          .json({ success: false, error: "Program not found" });
+      }
+
+      participants = programInfo.participants;
     }
 
-    const participants = programInfo.participants;
-
     const course = await Course.create({
-      courseName,
-      courseCode,
+      name,
+      code,
       section,
       instructors,
       participants,
@@ -56,7 +53,7 @@ exports.createCourse = async (req, res) => {
 };
 
 // Get all courses
-exports.getCourses = async (req, res) => {
+exports.getAllCourses = async (req, res) => {
   try {
     //Gets all the courses and populates the instructors, participants, prgram and classes fields
     const courses = await Course.find().populate(

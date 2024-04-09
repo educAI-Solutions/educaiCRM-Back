@@ -9,6 +9,7 @@ const {
 // Define routes for classes
 router.post("/create", classController.createClass);
 router.get("/get/:id", classController.getClassById);
+router.get("/get-all", classController.getAllClasses);
 router.put("/update/:id", classController.updateClass);
 router.delete("/delete/:id", classController.deleteClass);
 
