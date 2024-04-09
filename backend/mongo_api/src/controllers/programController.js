@@ -1,9 +1,6 @@
 const Program = require("../models/programModel");
-<<<<<<< HEAD
-=======
 const Course = require("../models/courseModel");
 const Class = require("../models/classModel");
->>>>>>> ES-55-Funcionalidad-de-CRUD-de-Clases
 
 // Controller methods for curricular programs
 exports.createProgram = async (req, res) => {
@@ -85,24 +82,16 @@ exports.updateProgram = async (req, res) => {
 
 exports.deleteProgram = async (req, res) => {
   try {
-<<<<<<< HEAD
-    const { id } = req.params;
-    const deletedProgram = await Program.findByIdAndDelete(id);
-    if (!deletedProgram) {
-=======
     const programId = req.params.id;
 
     // Find the program
     const programData = await Program.findById(programId);
 
     if (!programData) {
->>>>>>> ES-55-Funcionalidad-de-CRUD-de-Clases
       return res
         .status(404)
         .json({ success: false, message: "Program not found" });
     }
-<<<<<<< HEAD
-=======
 
     // Delete all related courses and their child classes
     for (let courseId of programData.courses) {
@@ -113,7 +102,6 @@ exports.deleteProgram = async (req, res) => {
     // Delete the program
     await Program.deleteOne({ _id: programId });
 
->>>>>>> ES-55-Funcionalidad-de-CRUD-de-Clases
     res
       .status(200)
       .json({ success: true, message: "Program deleted successfully" });

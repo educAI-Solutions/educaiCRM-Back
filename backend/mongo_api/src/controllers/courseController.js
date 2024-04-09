@@ -1,9 +1,6 @@
 const Course = require("../models/courseModel");
 const Program = require("../models/programModel");
-<<<<<<< HEAD
-=======
 const Class = require("../models/classModel");
->>>>>>> ES-55-Funcionalidad-de-CRUD-de-Clases
 
 // Create a new course
 exports.createCourse = async (req, res) => {
@@ -49,8 +46,6 @@ exports.createCourse = async (req, res) => {
       program,
       classes,
     });
-<<<<<<< HEAD
-=======
 
     if (program) {
       await Program.updateOne(
@@ -58,7 +53,6 @@ exports.createCourse = async (req, res) => {
         { $push: { courses: course._id } }
       );
     }
->>>>>>> ES-55-Funcionalidad-de-CRUD-de-Clases
     res.status(201).json({ success: true, data: course });
   } catch (error) {
     console.error("Error creating course:", error);
@@ -136,20 +130,6 @@ exports.updateCourse = async (req, res) => {
 
 // Delete a course by ID
 exports.deleteCourse = async (req, res) => {
-<<<<<<< HEAD
-  const { id } = req.params;
-  try {
-    const course = await Course.findByIdAndDelete(id);
-    if (!course) {
-      return res
-        .status(404)
-        .json({ success: false, error: "Course not found" });
-    }
-    res.status(204).end();
-  } catch (error) {
-    console.error("Error deleting course:", error);
-    res.status(500).json({ success: false, error: "Internal server error" });
-=======
   try {
     const courseId = req.params.id;
 
@@ -180,6 +160,5 @@ exports.deleteCourse = async (req, res) => {
   } catch (error) {
     console.error("Error deleting course:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
->>>>>>> ES-55-Funcionalidad-de-CRUD-de-Clases
   }
 };
