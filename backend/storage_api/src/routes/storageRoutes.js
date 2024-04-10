@@ -7,9 +7,6 @@ const {
   checkTeacherOrAdmin,
   checkAdmin,
 } = require("../middleware/jwtAuth");
-require("dotenv").config();
-
-const secretKey = process.env.ACCESS_TOKEN_SECRET;
 
 router.post(
   "/upload/attendance",
