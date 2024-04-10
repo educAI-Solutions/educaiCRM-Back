@@ -104,7 +104,7 @@ exports.loginUser = async (req, res) => {
     const id = user._id;
 
     // Passwords match, generate JWT token
-    const token = jwt.sign({ username, role }, secretKey, {
+    const token = jwt.sign({ username, role, id }, secretKey, {
       expiresIn: "1h",
     });
     res.status(200).json({

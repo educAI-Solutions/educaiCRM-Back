@@ -6,6 +6,7 @@ const {
   checkTeacherOrAdmin,
   checkAdmin,
 } = require("../middleware/jwtAuth");
+const { route } = require("./attendanceRoutes");
 
 require("dotenv").config();
 // Get the secret key from the environment variables
@@ -27,6 +28,16 @@ router.get(
   "/get/:id",
   // authenticateJWT,
   CourseController.getCourseById
+);
+router.get(
+  "/get/instructor/:id",
+  // authenticateJWT,
+  CourseController.getCourseByInstructor
+);
+router.get(
+  "/get/participant/:id",
+  // authenticateJWT,
+  CourseController.getCourseByParticipant
 );
 router.put(
   "/update/:id",

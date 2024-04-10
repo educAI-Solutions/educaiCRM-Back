@@ -88,7 +88,7 @@ exports.getCourseById = async (req, res) => {
   const { id } = req.params;
   try {
     const course = await Course.findById(id).populate(
-      "instructors participants program classes"
+      "instructors participants classes"
     );
     if (!course) {
       return res
@@ -105,6 +105,64 @@ exports.getCourseById = async (req, res) => {
     res.status(200).json({ success: true, data: course });
   } catch (error) {
     console.error("Error getting course by ID:", error);
+    res.status(500).json({ success: false, error: "Internal server error" });
+  }
+};
+
+// Get course by instructor
+exports.getCourseByInstructor = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const courses = await Course.find({ instructors: id }).populate(
+      "instructors classes"
+    );
+
+    if (!courses) {
+      return res
+        .status(404)
+        .json({ success: false, error: "No courses found for instructor" });
+    }
+
+    // Remove the passwords from the instructors and participants
+    courses.forEach((course) => {
+      course.instructors.forEach((instructor) => {
+        instructor.password = undefined;
+      });
+    });
+
+    res.status(200).json({ success: true, data: courses });
+  } catch (error) {
+    console.error("Error getting course by instructor:", error);
+    res.status(500).json({ success: false, error: "Internal server error" });
+  }
+};
+
+// Get course by participant
+exports.getCourseByParticipant = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const courses = await Course.find({ participants: id }).populate(
+      "instructors classes"
+    );
+
+    if (!courses) {
+      return res
+        .status(404)
+        .json({ success: false, error: "No courses found for student" });
+    }
+
+    // Remove the passwords from the instructors and participants
+    courses.forEach((course) => {
+      course.instructors.forEach((instructor) => {
+        instructor.password = undefined;
+      });
+    });
+
+    res.status(200).json({ success: true, data: courses });
+  } catch (error) {
+    console.error("Error getting course by student:", error);
     res.status(500).json({ success: false, error: "Internal server error" });
   }
 };
