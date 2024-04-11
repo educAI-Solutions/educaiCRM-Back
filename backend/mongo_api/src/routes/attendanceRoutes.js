@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
 const attendanceController = require("../controllers/attendanceController");
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 // Generate attendance Excel file for a class
 router.get(
@@ -9,6 +12,10 @@ router.get(
 );
 
 // Upload filled-out attendance Excel file
-router.post("/upload/:classId", attendanceController.uploadAttendanceExcel);
+router.post(
+  "/upload/:classId",
+  upload.single("file"),
+  attendanceController.uploadAttendanceExcel
+);
 
 module.exports = router;

@@ -1,6 +1,6 @@
 const Class = require("../models/classModel");
 const ExcelService = require("../services/excelService");
-const fs = require("fs");
+const ExcelJS = require("exceljs");
 
 // Generate and download attendance Excel file for a class
 exports.generateAndDownloadAttendanceExcel = async (req, res) => {
@@ -13,6 +13,7 @@ exports.generateAndDownloadAttendanceExcel = async (req, res) => {
     const excelData = classInfo.participants.map((participant) => ({
       Name: participant.participant.username,
       Email: participant.participant.email,
+      ID: participant.participant._id,
       Attended: participant.attended ? true : false,
     }));
 
@@ -22,7 +23,7 @@ exports.generateAndDownloadAttendanceExcel = async (req, res) => {
     // Set response headers for download of the excel file
     res.setHeader(
       "Content-Type",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8"
     );
 
     res.setHeader(
@@ -44,8 +45,31 @@ exports.uploadAttendanceExcel = async (req, res) => {
     const { classId } = req.params;
     const uploadedFile = req.file; // Assuming Multer middleware is used for file upload
 
-    // Logic to process the uploaded Excel file and update attendance records
-    // Use a service or utility function to handle the Excel parsing and attendance update
+    // Create a new workbook
+    const workbook = new ExcelJS.Workbook();
+
+    // Load the uploaded file into the workbook
+    await workbook.xlsx.load(uploadedFile.buffer);
+
+    // Get the first worksheet in the workbook
+    const worksheet = workbook.getWorksheet(1);
+
+    // Iterate over each row in the worksheet
+    const participants = [];
+    worksheet.eachRow((row, rowNumber) => {
+      // Skip the header row
+      if (rowNumber !== 1) {
+        // remove the "" from the id
+        const id = row.getCell(3).value.replace(/"/g, "");
+        const attended = row.getCell(4).value;
+
+        participants.push({ participant: id, attended: attended });
+      }
+    });
+
+    console.log(participants);
+
+    await Class.findByIdAndUpdate(classId, { participants }, { new: true });
 
     res
       .status(200)
