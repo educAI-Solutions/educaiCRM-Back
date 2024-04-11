@@ -14,6 +14,7 @@ const classSchema = new mongoose.Schema({
       attended: { type: Boolean, default: false },
     },
   ],
+  state: { type: String, default: "upcoming" }, // Assuming state can be "upcoming", "ongoing", or "completed"
 });
 
 const Class = mongoose.model("Class", classSchema);

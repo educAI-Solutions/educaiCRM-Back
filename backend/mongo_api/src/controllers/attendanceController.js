@@ -1,4 +1,5 @@
 const Class = require("../models/classModel");
+const Course = require("../models/courseModel");
 const ExcelService = require("../services/excelService");
 const ExcelJS = require("exceljs");
 
@@ -76,6 +77,50 @@ exports.uploadAttendanceExcel = async (req, res) => {
       .json({ success: true, message: "Attendance updated successfully" });
   } catch (error) {
     console.error("Error uploading attendance Excel:", error);
+    res.status(500).json({ success: false, error: "Internal server error" });
+  }
+};
+
+exports.getStudentAttendance = async (req, res) => {
+  try {
+    const { studentId } = req.params;
+
+    // Get all courses the student is enrolled in and populate the classes
+    const courses = await Course.find({ participants: studentId }).populate(
+      "classes program"
+    );
+
+    if (!courses) {
+      return res
+        .status(404)
+        .json({ success: false, error: "No courses found for student" });
+    }
+
+    //create a attendance percentage array for each course
+    const attendancePercentage = courses.map((course) => {
+      let totalClasses = 0;
+      let attendedClasses = 0;
+      course.classes.forEach((classItem) => {
+        totalClasses++;
+        const participant = classItem.participants.find(
+          (participant) => participant.participant == studentId
+        );
+        if (participant && participant.attended) {
+          attendedClasses++;
+        }
+      });
+      return {
+        name: course.name,
+        section: course.section,
+        program: course.program.name,
+        courseID: course._id,
+        attendancePercentage: (attendedClasses / totalClasses) * 100,
+      };
+    });
+
+    res.status(200).json({ success: true, data: attendancePercentage });
+  } catch (error) {
+    console.error("Error getting attendance percentage:", error);
     res.status(500).json({ success: false, error: "Internal server error" });
   }
 };

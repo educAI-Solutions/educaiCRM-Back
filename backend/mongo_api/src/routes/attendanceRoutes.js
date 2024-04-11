@@ -18,4 +18,7 @@ router.post(
   attendanceController.uploadAttendanceExcel
 );
 
+// Get the total attendance for each course a student is enrolled in
+router.get("/student/:studentId", attendanceController.getStudentAttendance);
+
 module.exports = router;

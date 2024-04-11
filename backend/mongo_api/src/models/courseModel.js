@@ -10,6 +10,7 @@ const courseSchema = new mongoose.Schema({
   endDate: { type: Date, required: true },
   program: { type: mongoose.Schema.Types.ObjectId, ref: "Program" },
   classes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Class" }],
+  state: { type: String, default: "active" }, // Assuming state can be "active" or "inactive"
 });
 
 const Course = mongoose.model("Course", courseSchema);
