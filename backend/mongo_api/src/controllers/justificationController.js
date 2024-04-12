@@ -2,9 +2,16 @@ const Justification = require("../models/justificationModel");
 
 exports.createJustification = async (req, res) => {
   try {
-    const { student, classes, fullname, rut, reason, startDate, endDate } =
-      req.body;
-    console.log(req.body);
+    const {
+      student,
+      classes,
+      fullname,
+      rut,
+      reason,
+      startDate,
+      endDate,
+      fileExtension,
+    } = req.body;
     const justification = await Justification.create({
       student,
       classes,
@@ -13,6 +20,7 @@ exports.createJustification = async (req, res) => {
       reason,
       startDate,
       endDate,
+      fileExtension,
     });
     await justification.save();
     res.status(201).json({ success: true, data: justification });

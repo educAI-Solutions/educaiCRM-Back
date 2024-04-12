@@ -1,7 +1,6 @@
 const { BlobServiceClient } = require("@azure/storage-blob");
 const { v1: uuidv1 } = require("uuid");
 const { Readable } = require("stream");
-const { Console } = require("console");
 require("dotenv").config();
 
 const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
@@ -32,13 +31,12 @@ exports.uploadAttendance = async (req, res) => {
 
 exports.uploadJustifications = async (req, res) => {
   try {
-    const { studentId, justificationID } = req.body;
+    console.log("Uploading justification file");
+    const { justificationID, fileExtension } = req.body;
     const containerClient =
       blobServiceClient.getContainerClient("justifications");
     const file = req.file;
-    // save the original file extension
-    // use uuid to generate a unique name for the file and add the original extension
-    const blobName = `${uuidv1()}${file.originalname}`;
+    const blobName = `${justificationID}.${fileExtension}`;
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
     const stream = file.buffer;
     console.log(`Uploading file: ${file.originalname}`);

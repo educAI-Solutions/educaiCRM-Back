@@ -38,6 +38,9 @@ const JustificationSchema = new mongoose.Schema({
     enum: ["pending", "accepted", "rejected", "cancelled", "questioned"],
     default: "pending",
   },
+  fileExtension: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("Justification", JustificationSchema);
