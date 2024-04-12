@@ -91,6 +91,32 @@ exports.getAllClasses = async (req, res) => {
   }
 };
 
+exports.getClassesByTeacher = async (req, res) => {
+  try {
+    const { teacherId } = req.params;
+    const classes = await Class.find({ instructors: teacherId }).populate(
+      "course"
+    );
+    res.status(200).json({ success: true, data: classes });
+  } catch (error) {
+    console.error("Error getting classes by teacher:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+exports.getClassesByStudent = async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const classes = await Class.find({
+      "participants.participant": studentId,
+    }).populate("course");
+    res.status(200).json({ success: true, data: classes });
+  } catch (error) {
+    console.error("Error getting classes by student:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
 exports.updateClass = async (req, res) => {
   try {
     const { id } = req.params;
