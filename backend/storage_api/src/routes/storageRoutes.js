@@ -28,6 +28,17 @@ router.post(
   upload.single("file"),
   storageController.uploadRules
 );
-router.get("/download/:filename", storageController.downloadFile);
+router.get(
+  "/download/attendance/:filename/:fileExtension",
+  storageController.downloadAttendance
+);
+router.get(
+  "/download/justifications/:filename/:fileExtension",
+  storageController.downloadJustification
+);
+router.get(
+  "/download/rules/:filename/:fileExtension",
+  storageController.downloadRules
+);
 
 module.exports = router;

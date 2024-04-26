@@ -69,11 +69,60 @@ exports.uploadRules = async (req, res) => {
   }
 };
 
-exports.downloadFile = async (req, res) => {
+exports.downloadAttendance = async (req, res) => {
   try {
     const containerClient = blobServiceClient.getContainerClient("attendance");
     const filename = req.params.filename;
-    const blockBlobClient = containerClient.getBlockBlobClient(filename);
+    const fileExtension = req.params.fileExtension;
+    const file = `${filename}.${fileExtension}`;
+    const blockBlobClient = containerClient.getBlockBlobClient(file);
+
+    // Download the file as a stream
+    const downloadResponse = await blockBlobClient.download();
+
+    // Set the appropriate headers for binary data
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+
+    // Pipe the file stream to the response
+    downloadResponse.readableStreamBody.pipe(res);
+  } catch (error) {
+    console.error("Error downloading file:", error);
+    res.status(500).send("Internal server error");
+  }
+};
+
+exports.downloadJustification = async (req, res) => {
+  try {
+    const containerClient =
+      blobServiceClient.getContainerClient("justifications");
+    const filename = req.params.filename;
+    const fileExtension = req.params.fileExtension;
+    const file = `${filename}.${fileExtension}`;
+    const blockBlobClient = containerClient.getBlockBlobClient(file);
+
+    // Download the file as a stream
+    const downloadResponse = await blockBlobClient.download();
+
+    // Set the appropriate headers for binary data
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+
+    // Pipe the file stream to the response
+    downloadResponse.readableStreamBody.pipe(res);
+  } catch (error) {
+    console.error("Error downloading file:", error);
+    res.status(500).send("Internal server error");
+  }
+};
+
+exports.downloadRules = async (req, res) => {
+  try {
+    const containerClient = blobServiceClient.getContainerClient("rules");
+    const filename = req.params.filename;
+    const fileExtension = req.params.fileExtension;
+    const file = `${filename}.${fileExtension}`;
+    const blockBlobClient = containerClient.getBlockBlobClient(file);
 
     // Download the file as a stream
     const downloadResponse = await blockBlobClient.download();

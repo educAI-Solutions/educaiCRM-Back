@@ -26,6 +26,12 @@ router.get("/get/:id", justificationController.getJustification);
 // Update a specific justification
 router.put("/update/:id", justificationController.updateJustification);
 
+// Update the state of a specific justification
+router.put(
+  "/update/review/:id",
+  justificationController.updateJustificationState
+);
+
 // Delete a specific justification
 router.delete("/delete/:id", justificationController.deleteJustification);
 
