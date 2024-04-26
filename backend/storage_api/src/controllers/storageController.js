@@ -31,7 +31,6 @@ exports.uploadAttendance = async (req, res) => {
 
 exports.uploadJustifications = async (req, res) => {
   try {
-    console.log("Uploading justification file");
     const { justificationID, fileExtension } = req.body;
     const containerClient =
       blobServiceClient.getContainerClient("justifications");
