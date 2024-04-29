@@ -10,6 +10,7 @@ const classRoutes = require("./routes/classRoutes");
 const programRoutes = require("./routes/programRoutes");
 const attendanceRoutes = require("./routes/attendanceRoutes");
 const justificationRoutes = require("./routes/justificationRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 dotenv.config();
 
@@ -65,6 +66,9 @@ app.use("/api/attendance", attendanceRoutes);
 
 // API Justification routes
 app.use("/api/justifications", justificationRoutes);
+
+// API Notification routes
+app.use("/api/notifications", notificationRoutes);
 
 // Serve the React app
 app.get("*", (req, res) => {
