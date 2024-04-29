@@ -118,31 +118,29 @@ exports.loginUser = async (req, res) => {
   }
 };
 
-exports.updateUser = async (req, res) => {
-  const { username } = req.params;
-  const { email, password } = req.body;
+exports.updateUserRole = async (req, res) => {
+  const { id } = req.params;
+  const { role } = req.body;
 
   try {
-    // Find the user by username
-    const user = await Account.findOne({ username });
+    // Find the user
+    const user = await Account.findById(id);
 
     if (!user) {
-      // User not found
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
     }
 
-    // Update user's email and password
-    if (email) user.email = email;
-    if (password) user.password = await bcrypt.hash(password, 10);
-
-    // Save the updated user
+    // Update the role
+    user.role = role;
     await user.save();
 
-    res
-      .status(200)
-      .json({ success: true, message: "User updated successfully" });
+    res.status(200).json({
+      success: true,
+      message: "User role updated successfully",
+      updatedUser: user, // Return the updated user object
+    });
   } catch (error) {
     console.error("Update error:", error);
     res.status(500).json({ success: false, message: "Internal server error" });

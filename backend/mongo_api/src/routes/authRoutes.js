@@ -29,11 +29,11 @@ router.get(
   accountController.getUserDetails
 );
 
-// Update route
+// Update role route
 router.put(
-  "/update/:username",
+  "/updateRole/:id",
   // authenticateJWT,
-  accountController.updateUser
+  accountController.updateUserRole
 );
 
 // Delete route
