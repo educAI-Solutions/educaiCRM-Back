@@ -11,5 +11,4 @@ const accountSchema = new mongoose.Schema({
   },
 });
 
-// Compile model from schema
 module.exports = mongoose.model("Account", accountSchema);

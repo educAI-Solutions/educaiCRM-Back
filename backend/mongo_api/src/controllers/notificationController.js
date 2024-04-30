@@ -2,12 +2,13 @@ const Notification = require("../models/notificationModel");
 
 exports.createNotification = async (req, res) => {
   try {
-    const { type, content, programId, courseId, classId } = req.body;
-    const recipient = req.user.id; // Assuming authentication
+    const { recipient, type, content, subject, programId, courseId, classId } =
+      req.body;
 
     const notification = new Notification({
       recipient,
       type,
+      subject,
       content,
       programId,
       courseId,
