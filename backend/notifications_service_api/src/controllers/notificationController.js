@@ -26,41 +26,7 @@ exports.sendNotification = async (req, res) => {
     const text = notification.content;
 
     const mailOptions = {
-      from: "EducAI CRM <notifications@educai.site>",
-      to: to,
-      subject: subject,
-      text: text,
-      html: `<h1>${text}</h1>`,
-    };
-
-    await transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log("Email sent: " + info.response);
-      }
-    });
-
-    res.status(200).json({ message: "Notification sent successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error sending notification" });
-  }
-};
-
-exports.sendManualNotification = async (req, res) => {
-  try {
-    const { email, subject, content } = req.body;
-
-    const account = await Account.findOne({
-      email: email,
-    });
-
-    const to = account.email;
-    const text = content;
-
-    const mailOptions = {
-      from: "Excited User",
+      from: "Excited User <mailgun@sandbox-123.mailgun.org>",
       to: to,
       subject: subject,
       text: text,
