@@ -17,7 +17,7 @@ exports.createNotification = async (req, res) => {
 
     await notification.save();
 
-    res.status(201).json({ success: true, notification });
+    res.status(201).json({ success: true, data: notification });
   } catch (error) {
     console.error("Error creating notification:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
