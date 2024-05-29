@@ -1,15 +1,9 @@
-from fastapi import FastAPI, HTTPException # type: ignore
-import os
-from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
-from langchain_core.messages import HumanMessage
-
-load_dotenv()   # Load environment variables from .env file
-
-openai_api_key = os.getenv("OPENAI_API_KEY")
-chat = ChatOpenAI(api_key=openai_api_key, model="gpt-3.5-turbo-0125")
+from fastapi import FastAPI, HTTPException, Request
+from controller import ChatController
+import uuid
 
 app = FastAPI()
+chat_controller = ChatController()
 
 @app.get("/")
 async def root():
@@ -17,11 +11,22 @@ async def root():
 
 @app.get("/testing")
 async def testing():
-    response = chat.invoke(
-        [
-            HumanMessage(
-                content="Translate this sentence from English to French: I love programming."
-            )
-        ]
-    )
-    return {"reply": response}
+    chat_id = str(uuid.uuid4())
+    try:
+        response = chat_controller.translate_to_french(chat_id, "I love programming.")
+        return {"reply": response}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/chat")
+async def chat(request: Request):
+    data = await request.json()
+    user_message = data.get("message")
+    chat_id = data.get("chat_id")
+    if not chat_id:
+        chat_id = str(uuid.uuid4())
+    try:
+        response = chat_controller.chat_with_history(chat_id, user_message)
+        return {"chat_id": chat_id, "reply": response}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
