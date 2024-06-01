@@ -18,6 +18,7 @@ class ChatController:
     def __init__(self):
         openai_key = os.getenv("OPENAI_API_KEY")
         doc_store_api_url = os.getenv("DOC_STORE_API_URL")
+        # Could use gpt-4o for better performance and updated model
         self.chat = ChatOpenAI(model="gpt-3.5-turbo-0125", api_key=openai_key)
         self.prompt = ChatPromptTemplate.from_messages(
             [
