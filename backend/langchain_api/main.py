@@ -1,9 +1,25 @@
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from controller import ChatController
+
 import uuid
 
 app = FastAPI()
 chat_controller = ChatController()
+
+origins = [
+    "http://localhost",
+    "http://localhost:3000",  # Assuming your React app is running on port 3000
+    # Add other origins as needed
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "OPTIONS"],  # Include OPTIONS method
+    allow_headers=["*"],
+)
 
 @app.get("/")
 async def root():
