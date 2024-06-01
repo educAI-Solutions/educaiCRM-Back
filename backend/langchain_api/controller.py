@@ -4,6 +4,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.memory import ChatMessageHistory
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
+from fastapi import HTTPException
 import os
 import json
 from dotenv import load_dotenv
@@ -22,7 +23,7 @@ class ChatController:
             [
                 (
                     "system",
-                    "You are a helpful assistant. Try to rhyme whenever you answer.",
+                    "You are a helpful assistant for a user who is trying to clear their doubts about topics related to classes and courses. ",
                 ),
                 MessagesPlaceholder(variable_name="messages"),
                 MessagesPlaceholder(variable_name="documents"),
@@ -51,6 +52,7 @@ class ChatController:
                     reconstructed_messages.append(AIMessage(content=msg["msg"]))
                 else:
                     raise ValueError("Unsupported message role")
+            print(reconstructed_messages)
             return ChatMessageHistory(messages=reconstructed_messages)
         return ChatMessageHistory()
 
@@ -73,7 +75,7 @@ class ChatController:
 
             serialized_messages.append(serialized_msg)
 
-        self.redis_client.setex(chat_key, 900, json.dumps(serialized_messages))
+        self.redis_client.setex(chat_key, 300, json.dumps(serialized_messages))
 
     def add_user_message(self, chat_id, message: str):
         chat_history = self._get_chat_history(chat_id)
@@ -91,10 +93,20 @@ class ChatController:
         print(user_message)
         retrieved_docs = self.retrieve_documents(user_message)
         print(retrieved_docs)
+        # leave documents empty if docs[1] is less than 0.5
+        # Needs at least 50% confidence to use the retrieved documents
+        if retrieved_docs[0][1] < 0.5:
+            response = self.chain.invoke({
+                "messages": chat_history.messages,
+                "documents": []
+            })
+            chat_history.add_ai_message(response.content)
+            self._save_chat_history(chat_id, chat_history)
+            return response
         
         response = self.chain.invoke({
             "messages": chat_history.messages,
-            "documents": [doc["page_content"] for doc in retrieved_docs]
+            "documents": [doc[0]["page_content"] for doc in retrieved_docs]
         })
         chat_history.add_ai_message(response.content)
         self._save_chat_history(chat_id, chat_history)
