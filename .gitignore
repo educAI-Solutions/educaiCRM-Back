@@ -132,3 +132,4 @@ dist
 # Ignore venv environment for langchain API
 venv/
 __pycache__/
+db/
