@@ -17,7 +17,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "OPTIONS"],  # Include OPTIONS method
+    allow_methods=["GET", "POST", "DELETE", "OPTIONS"],  # Include OPTIONS method
     allow_headers=["*"],
 )
 
@@ -83,5 +83,13 @@ async def delete_all_documents():
     try:
         await chroma_doc_store.delete_db()
         return {"message": "All documents deleted successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.get("/documents")
+async def get_documents():
+    try:
+        documents = await chroma_doc_store.get_all_documents()
+        return {"documents": documents}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

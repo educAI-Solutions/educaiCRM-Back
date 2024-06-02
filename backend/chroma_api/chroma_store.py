@@ -127,6 +127,13 @@ class ChromaDocumentStore:
     def search_documents(self, query: str, k=1):
         # Perform a similarity search on the Chroma vector store
         return self.doc_store.similarity_search_with_relevance_scores(query, k=k)
+    
+    async def get_all_documents(self):
+        documents = []
+        async for document in self.collection.find({}):
+            documents.append({"_id": str(document["_id"]), "filename": document["filename"]})
+        return documents
+
 
 # Initialize a global document store instance
 chroma_doc_store = ChromaDocumentStore()
