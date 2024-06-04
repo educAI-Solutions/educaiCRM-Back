@@ -7,43 +7,54 @@ const Class = require("../models/classModel");
 require("dotenv").config();
 const secretKey = process.env.ACCESS_TOKEN_SECRET;
 
+// Import the logging module
+const winston = require("winston");
+
+// Configure logging
+const logger = winston.createLogger({
+  level: "debug",
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.printf(({ timestamp, level, message }) => `${timestamp} - ${level.toUpperCase()}: ${message}`)
+  ),
+  transports: [
+    new winston.transports.Console(),
+    new winston.transports.File({ filename: "app.log" })
+  ]
+});
+
 async function createAccount(username, email, password, role = "student") {
   try {
     const account = new Account({ username, email, password, role });
     const savedAccount = await account.save();
-    console.log("Account created:", savedAccount);
+    logger.info(`Account created: ${savedAccount}`);
   } catch (error) {
-    console.error("Error creating account:", error);
+    logger.error(`Error creating account: ${error}`);
   }
 }
 
 exports.registerUser = async (req, res) => {
-  // Get username, email, and password from request body
   const { username, email, password, role } = req.body;
 
   try {
-    // Check if the username or email already exists
+    // Log the registration attempt with DEBUG level
+    logger.debug(`Attempting to register user with username: ${username} and email: ${email}`);
+
     const existingUser = await Account.findOne({
       $or: [{ username }, { email }],
     });
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Username or email already exists" });
+      logger.info(`Username or email already exists: ${username}, ${email}`);
+      return res.status(400).json({ success: false, message: "Username or email already exists" });
     }
 
-    // Hash the password (Change this to frontend for extra security later)
-    const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
-
-    // Create a new account
+    const hashedPassword = await bcrypt.hash(password, 10);
     await createAccount(username, email, hashedPassword, role);
 
-    // Account created successfully
-    res
-      .status(201)
-      .json({ success: true, message: "Account created successfully" });
+    logger.info(`User registered successfully: ${username}`);
+    res.status(201).json({ success: true, message: "Account created successfully" });
   } catch (error) {
-    console.error("Registration error:", error);
+    logger.error(`Registration error for user ${username}: ${error}`);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
@@ -52,68 +63,62 @@ exports.getUserDetails = async (req, res) => {
   const { username } = req.params;
 
   try {
-    // Find the user by username
+    logger.debug(`Fetching details for user: ${username}`);
     const user = await Account.findOne({ username });
 
     if (!user) {
-      // User not found
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      logger.info(`User not found: ${username}`);
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
+    logger.info(`User details retrieved: ${username}`);
     res.status(200).json({ success: true, user });
   } catch (error) {
-    console.error("Profile error:", error);
+    logger.error(`Profile error for user ${username}: ${error}`);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
 exports.loginUser = async (req, res) => {
-  // Get username and password from request body
   const { identifier, password } = req.body;
 
   try {
-    // Find the user by username
+    logger.debug(`Login attempt for identifier: ${identifier}`);
     const user = await Account.findOne({
       $or: [{ username: identifier }, { email: identifier }],
     });
 
     if (!user) {
-      // User not found
+      logger.info(`Login failed for identifier: ${identifier} - User not found`);
       return res.status(401).json({
         success: false,
         message: "Invalid username/email or password",
       });
     }
 
-    // Compare passwords
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      // Passwords do not match
+      logger.info(`Login failed for identifier: ${identifier} - Password mismatch`);
       return res.status(401).json({
         success: false,
         message: "Invalid username/email or password",
       });
     }
 
-    // get the role and _id of the user
-    const username = user.username;
-    const role = user.role;
-    const id = user._id;
-
-    // Passwords match, generate JWT token
+    const { username, role, _id: id } = user;
     const token = jwt.sign({ username, role, id }, secretKey, {
       expiresIn: "1h",
     });
+
+    logger.info(`User logged in successfully: ${username}`);
     res.status(200).json({
       success: true,
       message: "Login successful",
       token,
     });
   } catch (error) {
-    console.error("Login error:", error);
+    logger.error(`Login error for identifier ${identifier}: ${error}`);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
@@ -123,26 +128,25 @@ exports.updateUserRole = async (req, res) => {
   const { role } = req.body;
 
   try {
-    // Find the user
+    logger.debug(`Updating role for user ID: ${id}`);
     const user = await Account.findById(id);
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      logger.info(`User not found for ID: ${id}`);
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    // Update the role
     user.role = role;
     await user.save();
 
+    logger.info(`User role updated successfully for ID: ${id}`);
     res.status(200).json({
       success: true,
       message: "User role updated successfully",
-      updatedUser: user, // Return the updated user object
+      updatedUser: user,
     });
   } catch (error) {
-    console.error("Update error:", error);
+    logger.error(`Update error for user ID ${id}: ${error}`);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
@@ -151,36 +155,22 @@ exports.deleteUser = async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Find and delete the user by id
+    logger.debug(`Deleting user ID: ${id}`);
     const deletedUser = await Account.findByIdAndDelete(id);
 
     if (!deletedUser) {
-      // User not found
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      logger.info(`User not found for deletion, ID: ${id}`);
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    // Remove the user from any programs, courses, and classes they are enrolled in
-    await Program.updateMany(
-      { participants: id },
-      { $pull: { participants: id } }
-    );
-    await Course.updateMany(
-      { participants: id },
-      { $pull: { participants: id } }
-    );
-    // show through console.log the classes that are being found by the id
-    await Class.updateMany(
-      { "participants.participant": id },
-      { $pull: { participants: { participant: id } } }
-    );
+    await Program.updateMany({ participants: id }, { $pull: { participants: id } });
+    await Course.updateMany({ participants: id }, { $pull: { participants: id } });
+    await Class.updateMany({ "participants.participant": id }, { $pull: { participants: { participant: id } } });
 
-    res
-      .status(200)
-      .json({ success: true, message: "User deleted successfully" });
+    logger.info(`User deleted successfully, ID: ${id}`);
+    res.status(200).json({ success: true, message: "User deleted successfully" });
   } catch (error) {
-    console.error("Delete error:", error);
+    logger.error(`Delete error for user ID ${id}: ${error}`);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
