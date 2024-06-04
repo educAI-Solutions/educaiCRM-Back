@@ -134,3 +134,4 @@ venv/
 __pycache__/
 db/
 
+backend/survey_api/client_secret.json
