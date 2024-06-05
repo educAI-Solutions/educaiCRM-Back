@@ -3,6 +3,7 @@ from fastapi.responses import RedirectResponse
 from apiclient import discovery
 from httplib2 import Http
 from oauth2client import client, file, tools
+from oauth2client.service_account import ServiceAccountCredentials
 
 SCOPES = "https://www.googleapis.com/auth/forms.body"
 DISCOVERY_DOC = "https://forms.googleapis.com/$discovery/rest?version=v1"

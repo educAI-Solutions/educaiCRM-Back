@@ -2,9 +2,7 @@ const axios = require("axios");
 
 const checkForUpcomingClasses = async () => {
   try {
-    const response = await axios.get(
-      `${process.env.MONGO_API_URL}/get-all-classes`
-    );
+    const response = await axios.get(`http://localhost:5050/classes/get-all`);
     const classes = response.data;
 
     const oneWeekFromNow = new Date();
