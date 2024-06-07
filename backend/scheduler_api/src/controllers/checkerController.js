@@ -2,10 +2,12 @@ const axios = require("axios");
 
 const checkForUpcomingClasses = async () => {
   try {
-    const response = await axios.get(
-      `${process.env.MONGO_API_URL}/get-all-classes`
-    );
-    const classes = response.data;
+    const response = await axios.get("http://localhost:5050/api/classes/get-all");
+    const classes = response.data.data;
+
+    console.log("Checking for upcoming classes...");
+    console.log(classes);
+    console.log(classes[4].instructors[0])
 
     const oneWeekFromNow = new Date();
     oneWeekFromNow.setDate(oneWeekFromNow.getDate() + 7);
