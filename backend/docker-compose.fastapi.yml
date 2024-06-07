@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  chroma_api:
+    build:
+      context: ./chroma_api
+      dockerfile: Dockerfile
+    ports:
+      - "2525:2525"
+    networks:
+      - backend-network
+    depends_on:
+      - redis
+
+  langchain_api:
+    build:
+      context: ./langchain_api
+      dockerfile: Dockerfile
+    ports:
+      - "2020:2020"
+    networks:
+      - backend-network
+    depends_on:
+      - redis
+
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
