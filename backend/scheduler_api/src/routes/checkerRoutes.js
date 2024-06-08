@@ -13,9 +13,14 @@ router.get("/check-classes", async (req, res) => {
 });
 
 // This endpoint can be used for manual checks if needed
-router.get("/check-courses", async (req, res) => {
-  await checkForUpcomingCourses();
-  res.send("Checked for upcoming courses and sent notifications if necessary.");
+//07-06-2024 Agregué la función checkForEndOfCourses de forma distinta a la original
+router.get('/check-courses', async (req, res) => {
+  try {
+    await checkForUpcomingCourses();
+    res.status(200).send('Checked for upcoming courses and sent notifications.');
+  } catch (error) {
+    res.status(500).send('Error checking for upcoming courses.');
+  }
 });
 
 router.get("/check-end-of-courses", async (req, res) => {
