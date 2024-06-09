@@ -1,6 +1,33 @@
 version: "3.8"
 
 services:
+  mongo_api:
+    build:
+      context: ./mongo_api
+      dockerfile: Dockerfile
+    ports:
+      - "5050:5050"
+    networks:
+      - backend-network
+
+  notifications_api:
+    build:
+      context: ./notifications_api
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    networks:
+      - backend-network
+
+  storage_api:
+    build:
+      context: ./storage_api
+      dockerfile: Dockerfile
+    ports:
+      - "7070:7070"
+    networks:
+      - backend-network
+
   chroma_api:
     build:
       context: ./chroma_api
