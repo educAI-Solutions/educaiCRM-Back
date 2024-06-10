@@ -78,39 +78,33 @@ const checkForUpcomingCourses = async () => {
       const instructors = course.instructors
       // get the instructor _id for each instructor on the instructors array
       const instructorIds = instructors.map(instructor => instructor._id)
-      console.log(course)
-      console.log(instructorIds)
+      //console.log(course)
+      //console.log(instructorIds)
 
       // send a post request to the mongoapi to create a notification for each instructor
       for (const instructorId of instructorIds) {
         const notification = {
           recipient: instructorId,
-          type: "Info",
+          type: "Info, please read the content",
           subject: `Course ${course.name} starts in less than 14 days`,
           content: `Reminder: Your course ${course.name} is coming up on ${formattedStartDate}`,
           programId: course.program._id,
           courseId: course._id,
-          message: `Reminder: Your course ${course.name} is coming up on ${formattedStartDate}`,
-          date: new Date(),
-        };
-
-        await notification.save();
-        await axios.post(`${process.env.NOTIFICATION_API_URL}/notification`, {
-          courseId: course._id,
-          message: `Reminder: Your course ${course.name} is coming up on ${formattedStartDate}`,
-        });
-
-        console.log(`Notification sent for course ${course.name}`);
+        }
+        await axios.post("http://localhost:5050/api/notifications/", notification);
       }
 
       // send a post request to the notification api to send each notification
+
+      console.log(`Notification sent for course ${course.name}`);
+
+      
 
     }
   } catch (error) {
     console.error("Error checking for upcoming courses:", error);
   }
 };
-
 
 const checkForEndOfCourses = async () => {
   try {
@@ -145,7 +139,7 @@ const checkForEndOfCourses = async () => {
 };
 
 
-
+//Code actualizado
 
 module.exports = {
   checkForUpcomingClasses,
