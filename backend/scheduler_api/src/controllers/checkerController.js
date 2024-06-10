@@ -37,34 +37,33 @@ const checkForUpcomingCourses = async () => {
     const response = await axios.get("http://localhost:5050/api/courses/get-all");
     const courses = response.data.data;
 
-    // Obtener la fecha actual sin la hora en formato de cadena
-    courses[0].startDate = courses[0].startDate.split('T')[0];
-    console.log(courses[0].startDate);
-
     const currentDate = new Date();
     const oneWeekFromNow = new Date();
     oneWeekFromNow.setDate(oneWeekFromNow.getDate() + 7);
 
     for (const course of courses) {
-      const courseStartDate = new Date(course.startDate.split('T')[0]);
-      const formattedStartDate = courseStartDate.toISOString().split('T')[0];
+      // Convertir la fecha del curso a un objeto Date (asumiendo que el formato es ISO 8601)
+      const courseStartDate = new Date(course.startDate); 
+
+      // Calcular los días restantes en formato numérico
       const daysUntilCourse = Math.ceil((courseStartDate - currentDate) / (1000 * 60 * 60 * 24));
-      
-      //Hay que verificar que las fechas estén en un formato correcto, porque no se están guardando bien
+
+      // Formatear la fecha de inicio del curso para mostrar (elige el formato que prefieras)
+      const formattedStartDate = courseStartDate.toLocaleDateString(); // Ejemplo: "12/31/2023"
 
       console.log(`Course: ${course.name}, Start Date: ${formattedStartDate}, Days until course: ${daysUntilCourse}`);
 
       if (daysUntilCourse >= 0 && daysUntilCourse <= 7) {
         const notification = new Notification({
           courseId: course._id,
-          message: `Reminder: Your course ${course.name} is coming up on ${course.startDate}`, // Cambiado de 'date' a 'startDate'
+          message: `Reminder: Your course ${course.name} is coming up on ${formattedStartDate}`,
           date: new Date(),
         });
 
         await notification.save();
         await axios.post(`${process.env.NOTIFICATION_API_URL}/notification`, {
           courseId: course._id,
-          message: `Reminder: Your course ${course.name} is coming up on ${course.startDate}`, // Cambiado de 'date' a 'startDate'
+          message: `Reminder: Your course ${course.name} is coming up on ${formattedStartDate}`,
         });
 
         console.log(`Notification sent for course ${course.name}`);
@@ -74,6 +73,7 @@ const checkForUpcomingCourses = async () => {
     console.error("Error checking for upcoming courses:", error);
   }
 };
+
 
 const checkForEndOfCourses = async () => {
   try {
