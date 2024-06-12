@@ -147,79 +147,20 @@ const checkForEndOfCourses = async () => {
     // Get the current date
     const currentDate = new Date();
 
-    // Filter the courses that end in the next 14 days
-    const endOfCourses = courses.filter(course => {
+    //console.log(courses)
+
+    // Filter the courses that are ending in the next 14 days
+    const endingCourses = courses.filter(course => {
       const courseEndDate = new Date(course.endDate.split('T')[0]);
       const daysUntilCourseEnd = Math.ceil((courseEndDate - currentDate) / (1000 * 60 * 60 * 24));
       return daysUntilCourseEnd >= 0 && daysUntilCourseEnd <= 14;
     });
 
-    // Print the number of courses that end in the next 14 days
-    console.log(`Total courses that end today: ${endOfCourses.length}\n`);
+    // Print the number of courses that are ending in the next 14 days
+    console.log(`Total courses ending in the next 14 days: ${endingCourses.length}\n`);
 
-    // Give me the number of instructors who have courses that end in the next 14 days [IMPORTANT]
-    let instructors = []
-    for (const course of endOfCourses) {
-      instructors = instructors.concat(course.instructors)
-    }
-    const uniqueInstructors = [...new Set(instructors)]
-    console.log(`Total instructors with courses that end today: ${uniqueInstructors.length}\n`);
+    
 
-    // Give me the number of participants who have courses that end in the next 14 days [IMPORTANT]
-    let participants = []
-    for (const course of endOfCourses) {
-      participants = participants.concat(course.participants)
-    }
-    const uniqueParticipants = [...new Set(participants)]
-    console.log(`Total participants with courses that end today: ${uniqueParticipants.length}\n`);
-
-    // Show me the _id of the instructors and participants who have courses that end in the next 14 days [IMPORTANT]
-    const instructorIds = uniqueInstructors.map(instructor => instructor._id)
-    const participantIds = uniqueParticipants.map(participant => participant._id)
-    console.log(`Instructor IDs with courses that end today: ${instructorIds}\n`);
-    console.log(`Participant IDs with courses that end today: ${participantIds}\n`);
-
-    // Notify the instructors and participants of the courses that end in the next 14 days
-
-    for (const course of endOfCourses) {
-      const courseEndDate = new Date(course.endDate.split('T')[0]); // Convert the course end date into a Date object
-      const formattedEndDate = courseEndDate.toISOString().split('T')[0]; // Format the course end date
-      const daysUntilCourseEnd = Math.ceil(courseEndDate - currentDate) / (1000 * 60 * 60 * 24); // Calculate the days until the course ends
-      const daysUntilCourseEndInt = parseInt(daysUntilCourseEnd)
-
-      // Show the course details
-      console.log(`Course: ${course.name}\nEnd Date: ${formattedEndDate}\nDays until course end: ${daysUntilCourseEndInt}\n`);}
-
-      // send a post request to the mongoapi to create a notification for each instructor and participant
-      for (const instructorId of instructorIds) {
-        const notification = {
-          recipient: instructorId,
-          type: "QUEATE QUIETO QUE TE MATO",
-          subject: `Course ${course.name} ends in less than 14 days`,
-          content: `Reminder: Your course ${course.name} ends on ${formattedEndDate}`,
-          programId: course.program._id,
-          courseId: course._id,
-          classId: course.classes._id,
-        }
-
-        for (const participantId of participantIds) {
-          const notification = {
-            recipient: participantId,
-            type: "Info, please read the content",
-            subject: `Course ${course.name} ends in less than 14 days`,
-            content: `Reminder: Your course ${course.name} ends on ${formattedEndDate}`,
-            programId: course.program._id,
-            courseId: course._id,
-            classId: course.classes._id,
-          }
-        }
-
-        await axios.post("http://localhost:5050/api/notifications/", notification); // problemas con el course, revisar para un correcto funcionamiento
-      }
-
-      // send a post request to the notification api to send each notification
-
-      console.log(`Notification sent for course ${course.name}`);
     } catch (error) {
     console.error("Error checking for end of courses:", error);
   }
