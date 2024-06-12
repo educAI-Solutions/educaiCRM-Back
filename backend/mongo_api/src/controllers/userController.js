@@ -48,6 +48,9 @@ exports.getUserByIdentifier = async (req, res) => {
       $or: [{ username: identifier }, { email: identifier }],
     });
 
+    // Remove password from user object
+    user.password = undefined;
+
     if (!user) {
       return res
         .status(404)
