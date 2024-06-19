@@ -12,6 +12,7 @@ exports.createJustification = async (req, res) => {
       endDate,
       fileExtension,
     } = req.body;
+    console.log("Creating justification:", req);
     const justification = await Justification.create({
       student,
       classes,
