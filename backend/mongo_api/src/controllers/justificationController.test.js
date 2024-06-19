@@ -75,6 +75,5 @@ describe('Justification Controller', function() {
     expect(res.json.calledOnce).to.be.true;
   });
 
-  // Necesito borrar una justificación y retornar un éxito
 
 });

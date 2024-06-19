@@ -4,7 +4,24 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha 'src/controllers/*.test.js'"
+    "test": "mocha 'src/controllers/*.test.js'",
+    "coverage": "nyc npm test"
+  },
+  "nyc": {
+    "include": [
+      "src/controllers/justificationController.js",
+      "src/models/justificationModel.js"
+    ],
+    "reporter": [
+      "text",
+      "html"
+    ],
+    "all": true,
+    "check-coverage": true,
+    "statements": 90,
+    "branches": 90,
+    "functions": 90,
+    "lines": 90
   },
   "keywords": [],
   "author": "",
@@ -27,6 +44,7 @@
   "devDependencies": {
     "chai": "^4.4.1",
     "mocha": "^10.4.0",
+    "nyc": "^17.0.0",
     "sinon": "^18.0.0",
     "sinon-chai": "^3.7.0"
   }
