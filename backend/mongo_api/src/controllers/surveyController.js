@@ -26,15 +26,15 @@ const submitFoodSurvey = async (req, res) => {
     const { userId, classId, surveyData } = req.body;
     const survey = new Survey({
       userId,
-      type: "dietary",
+      type: "food",
       classId,
       surveyData,
     });
     await survey.save();
-    res.json({ message: "Dietary survey submitted successfully" });
+    res.json({ message: "Food survey submitted successfully" });
   } catch (error) {
     res.status(500).json({
-      error: "Failed to submit dietary survey",
+      error: "Failed to submit food survey",
       details: error.message,
     });
   }

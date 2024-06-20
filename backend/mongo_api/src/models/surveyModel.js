@@ -9,7 +9,7 @@ const surveySchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["teacher", "dietary", "attendance"],
+      enum: ["teacher", "food", "attendance"],
       required: true,
     },
     courseId: {
