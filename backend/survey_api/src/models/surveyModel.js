@@ -25,6 +25,22 @@ const surveySchema = new mongoose.Schema(
       of: String,
       required: true,
     },
+    participantsAnswered: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    participantsNotAnswered: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    startDate: {
+      type: Date,
+      default: Date.now,
+    },
   },
   { timestamps: true }
 );
