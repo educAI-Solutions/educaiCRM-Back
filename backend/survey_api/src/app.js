@@ -1,26 +1,45 @@
 const express = require("express");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const surveyRoutes = require("./routes/surveyRoutes");
+
+dotenv.config();
 const app = express();
 
-app.use(express.json());
+// Connect to MongoDB
+mongoose
+  .connect(process.env.mongo_login_string, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("Could not connect to MongoDB", err));
 
-app.post("/api/teacher-survey", (req, res) => {
-  const { userId, courseId, surveyData } = req.body;
-  // Save surveyData to the database
-  res.json({ message: "Teacher survey submitted successfully" });
+// Middleware
+app.use(express.json()); // Parses incoming JSON request bodies
+
+// Enable CORS
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
+
+// Use the survey routes
+app.use("/api", surveyRoutes);
+
+// 404 Route
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
 });
 
-app.post("/api/dietary-survey", (req, res) => {
-  const { userId, classId, surveyData } = req.body;
-  // Save surveyData to the database
-  res.json({ message: "Dietary survey submitted successfully" });
+// Error handling middleware (Keep this at the end)
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: "Something went wrong!" });
 });
 
-app.post("/api/attendance-survey", (req, res) => {
-  const { userId, classId, surveyData } = req.body;
-  // Save surveyData to the database
-  res.json({ message: "Attendance survey submitted successfully" });
-});
-
-app.listen(5000, () => {
-  console.log("Server is running on port 5000");
-});
+const port = process.env.PORT || 1010;
+app.listen(port, () => console.log(`Server listening on port ${port}`));
