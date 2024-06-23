@@ -5,7 +5,7 @@ const checkForUpcomingClasses = async () => {
     const response = await axios.get("http://localhost:5050/api/classes/get-all"); 
     const classes = response.data.data;
 
-    console.log(classes)
+    console.log(accounts)
 
     const currentDate = new Date();
 
@@ -28,8 +28,12 @@ const checkForUpcomingClasses = async () => {
     console.log(`Total participants with classes in the next 14 days: ${uniqueParticipants.length}\n`);
 
     // Show me the _id of the participants who have classes in the next 14 days [IMPORTANT]
-    const participantIds = uniqueParticipants.map(participant => participant._id)
+    const participantIds = uniqueParticipants.map(participant => participant.participant)
     console.log(`Participant IDs with classes in the next 14 days: ${participantIds}\n`);
+
+    // I need you to give me the name of the participant who have classes in the next 14 days [IMPORTANT]
+    const participantNames = uniqueParticipants.map(participant => participant.attended)
+    console.log(`Participant names with classes in the next 14 days: ${participantNames}\n`);
 
     // Notify the participants of the upcoming classes
     for (const classItem of upcomingClasses) {
@@ -42,7 +46,7 @@ const checkForUpcomingClasses = async () => {
 
       const participants = classItem.participants
       // get the participant _id for each participant on the participants array
-      const participantIds = participants.map(participant => participant._id)
+      const participantIds = participants.map(participant => participant.participant)
 
       // send a post request to the mongoapi to create a notification for each participant
       for (const participantId of participantIds) {
@@ -76,8 +80,6 @@ const checkForUpcomingCourses = async () => {
     // Get the current date
     const currentDate = new Date();
 
-    console.log(courses)
-
     // Filter the upcoming courses in the next 14 days
     const upcomingCourses = courses.filter(course => {
       const courseStartDate = new Date(course.startDate.split('T')[0]);
@@ -96,9 +98,14 @@ const checkForUpcomingCourses = async () => {
     const uniqueInstructors = [...new Set(instructors)]
     console.log(`Total instructors with courses in the next 14 days: ${uniqueInstructors.length}\n`);
 
-    // Show me the _id of the instructors who have courses in the next 14 days [IMPORTANT]
-    const instructorIds = uniqueInstructors.map(instructor => instructor._id)
-    console.log(`Instructor IDs with courses in the next 14 days: ${instructorIds}\n`);
+    //show me the name of the instructors who have courses in the next 14 days [IMPORTANT]
+    const instructorNames = uniqueInstructors.map(instructor => instructor.username)
+    console.log(`Instructor names with courses in the next 14 days: ${instructorNames}\n`);
+
+    //show me the email of the instructors who have courses in the next 14 days [IMPORTANT]
+    const instructorEmails = uniqueInstructors.map(instructor => instructor.email)
+    console.log(`Instructor emails with courses in the next 14 days: ${instructorEmails}\n`);
+    
 
 
     // Notify the instructors of the upcoming courses
