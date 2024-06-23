@@ -4,6 +4,19 @@ const Survey = require("../models/surveyModel");
 const submitTeacherSurvey = async (req, res) => {
   try {
     const { userId, courseId, surveyData } = req.body;
+
+    // Check for existing survey
+    const existingSurvey = await Survey.findOne({
+      userId,
+      type: "teacher",
+      courseId,
+    });
+    if (existingSurvey) {
+      return res
+        .status(400)
+        .json({ error: "Survey already submitted for this course" });
+    }
+
     const survey = new Survey({
       userId,
       type: "teacher",
@@ -24,6 +37,19 @@ const submitTeacherSurvey = async (req, res) => {
 const submitFoodSurvey = async (req, res) => {
   try {
     const { userId, classId, surveyData } = req.body;
+
+    // Check for existing survey
+    const existingSurvey = await Survey.findOne({
+      userId,
+      type: "food",
+      classId,
+    });
+    if (existingSurvey) {
+      return res
+        .status(400)
+        .json({ error: "Survey already submitted for this class" });
+    }
+
     const survey = new Survey({
       userId,
       type: "food",
@@ -44,6 +70,19 @@ const submitFoodSurvey = async (req, res) => {
 const submitAttendanceSurvey = async (req, res) => {
   try {
     const { userId, classId, surveyData } = req.body;
+
+    // Check for existing survey
+    const existingSurvey = await Survey.findOne({
+      userId,
+      type: "attendance",
+      classId,
+    });
+    if (existingSurvey) {
+      return res
+        .status(400)
+        .json({ error: "Survey already submitted for this class" });
+    }
+
     const survey = new Survey({
       userId,
       type: "attendance",
@@ -60,8 +99,42 @@ const submitAttendanceSurvey = async (req, res) => {
   }
 };
 
+// Controller function to handle class survey submission
+const submitClassSurvey = async (req, res) => {
+  try {
+    const { userId, classId, surveyData } = req.body;
+
+    // Check for existing survey
+    const existingSurvey = await Survey.findOne({
+      userId,
+      type: "class",
+      classId,
+    });
+    if (existingSurvey) {
+      return res
+        .status(400)
+        .json({ error: "Survey already submitted for this class" });
+    }
+
+    const survey = new Survey({
+      userId,
+      type: "class",
+      classId,
+      surveyData,
+    });
+    await survey.save();
+    res.json({ message: "Class survey submitted successfully" });
+  } catch (error) {
+    res.status(500).json({
+      error: "Failed to submit class survey",
+      details: error.message,
+    });
+  }
+};
+
 module.exports = {
   submitTeacherSurvey,
   submitFoodSurvey,
   submitAttendanceSurvey,
+  submitClassSurvey,
 };
