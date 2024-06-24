@@ -10,5 +10,7 @@ RUN npm install
 # Bundle app source
 COPY . .
 
+COPY /etc/letsencrypt/live/educaiapis.online/ /etc/letsencrypt/live/educaiapis.online/
+
 EXPOSE 5050
 CMD [ "node", "src/app.js" ]

@@ -10,5 +10,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Bundle app source
 COPY . .
 
+COPY /etc/letsencrypt/live/educaiapis.online/ /etc/letsencrypt/live/educaiapis.online/
+
 EXPOSE 2525
 CMD ["python", "main.py"]
