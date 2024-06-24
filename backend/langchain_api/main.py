@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from controller import ChatController
 
+import uvicorn
+import os
 import uuid
 
 app = FastAPI()
@@ -46,3 +48,12 @@ async def chat(request: Request):
         return {"chat_id": chat_id, "reply": response}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+if __name__ == "__main__":
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 2020)),  # Adjust the port as needed
+        ssl_keyfile="/etc/letsencrypt/live/educaiapis.online/privkey.pem",
+        ssl_certfile="/etc/letsencrypt/live/educaiapis.online/fullchain.pem",
+    )

@@ -4,6 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from chroma_store import chroma_doc_store
 import io
+import uvicorn
+import os
 
 app = FastAPI()
 
@@ -93,3 +95,12 @@ async def get_documents():
         return {"documents": documents}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+if __name__ == "__main__":
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 2525)),  # Adjust the port as needed
+        ssl_keyfile="/etc/letsencrypt/live/educaiapis.online/privkey.pem",
+        ssl_certfile="/etc/letsencrypt/live/educaiapis.online/fullchain.pem",
+    )

@@ -11,4 +11,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 EXPOSE 2020
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "2020"]
+CMD ["python", "main.py"]
+
