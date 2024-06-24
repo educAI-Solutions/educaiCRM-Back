@@ -14,8 +14,8 @@ COPY . .
 RUN mkdir -p /etc/letsencrypt/live/educaiapis.online/
 
 # Copy SSL certificates to the container
-COPY /etc/letsencrypt/live/educaiapis.online/ /etc/letsencrypt/live/educaiapis.online/
-COPY /etc/letsencrypt/live/educaiapis.online/ /etc/letsencrypt/live/educaiapis.online/
+COPY /etc/letsencrypt/live/educaiapis.online/privkey.pem /etc/letsencrypt/live/educaiapis.online/
+COPY /etc/letsencrypt/live/educaiapis.online/fullchain.pem /etc/letsencrypt/live/educaiapis.online/
 
 EXPOSE 9090
 CMD [ "node", "src/app.js" ]
