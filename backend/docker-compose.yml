@@ -9,6 +9,7 @@ services:
       - "5050:5050"
     networks:
       - backend-network
+    privileged: true # Run this service in privileged mode
 
   notifications_api:
     build:
@@ -18,6 +19,7 @@ services:
       - "9090:9090"
     networks:
       - backend-network
+    privileged: true # Run this service in privileged mode
 
   storage_api:
     build:
@@ -27,6 +29,7 @@ services:
       - "7070:7070"
     networks:
       - backend-network
+    privileged: true # Run this service in privileged mode
 
   chroma_api:
     build:
@@ -36,6 +39,7 @@ services:
       - "2525:2525"
     networks:
       - backend-network
+    privileged: true # Run this service in privileged mode
     depends_on:
       - redis
 
@@ -49,6 +53,7 @@ services:
       - backend-network
     depends_on:
       - redis
+    privileged: true # Run this service in privileged mode
 
   redis:
     image: "redis:alpine"
@@ -56,6 +61,7 @@ services:
       - "6379:6379"
     networks:
       - backend-network
+    privileged: true # Run this service in privileged mode
 
 networks:
   backend-network:
