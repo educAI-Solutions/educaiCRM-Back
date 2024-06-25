@@ -1,7 +1,8 @@
+# Use a Python base image
 FROM python:3.9-slim
 
 # Create app directory
-WORKDIR /usr/src/app
+WORKDIR /
 
 # Install app dependencies
 COPY requirements.txt ./
@@ -11,11 +12,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Create directory for SSL certificates
-RUN mkdir -p /etc/letsencrypt/live/educaiapis.online/
+RUN mkdir -p /home/azureuser/educai/educaiCRM-Back
 
 # Copy SSL certificates to the container
-COPY /etc/letsencrypt/live/educaiapis.online/privkey.pem /etc/letsencrypt/live/educaiapis.online/
-COPY /etc/letsencrypt/live/educaiapis.online/fullchain.pem /etc/letsencrypt/live/educaiapis.online/
+COPY /home/azureuser/educai/educaiCRM-Back/key.pem /home/azureuser/educai/educaiCRM-Back/
+COPY /home/azureuser/educai/educaiCRM-Back/cert.pem /home/azureuser/educai/educaiCRM-Back/
 
+# Expose the port your app runs on
 EXPOSE 2525
+
+# Command to run your application
 CMD ["python", "main.py"]
