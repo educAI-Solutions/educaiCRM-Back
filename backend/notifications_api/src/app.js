@@ -49,8 +49,8 @@ app.use((err, req, res, next) => {
 if (isProduction) {
   console.log("In production environment, using HTTPS");
   const options = {
-    key: fs.readFileSync(path.join(__dirname, "key.pem")),
-    cert: fs.readFileSync(path.join(__dirname, "cert.pem")),
+    key: fs.readFileSync(path.join(__dirname, "privkey.pem")),
+    cert: fs.readFileSync(path.join(__dirname, "fullchain.pem")),
   };
 
   https.createServer(options, app).listen(PORT, () => {

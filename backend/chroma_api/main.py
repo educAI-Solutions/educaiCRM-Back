@@ -96,8 +96,8 @@ async def get_documents():
     
 if __name__ == "__main__":
     is_production = os.environ.get("NODE_ENV") == "production"
-    ssl_keyfile = os.path.join(os.path.dirname(__file__), "key.pem")
-    ssl_certfile = os.path.join(os.path.dirname(__file__), "cert.pem")
+    ssl_keyfile = os.path.join(os.path.dirname(__file__), "privkey.pem")
+    ssl_certfile = os.path.join(os.path.dirname(__file__), "fullchain.pem")
     
     uvicorn.run(
         app,
