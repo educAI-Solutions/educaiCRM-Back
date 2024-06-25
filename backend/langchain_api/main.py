@@ -51,8 +51,9 @@ async def chat(request: Request):
 
 if __name__ == "__main__":
     is_production = os.environ.get("NODE_ENV") == "production"
-    ssl_keyfile = "/home/azureuser/educai/educaiCRM-Back/key.pem"
-    ssl_certfile = "/home/azureuser/educai/educaiCRM-Back/cert.pem"
+    # Directory for the keys that is the same as this file
+    ssl_keyfile = os.path.join(os.path.dirname(__file__), "key.pem")
+    ssl_certfile = os.path.join(os.path.dirname(__file__), "cert.pem")
     
     uvicorn.run(
         app,

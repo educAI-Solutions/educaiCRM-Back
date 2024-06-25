@@ -74,8 +74,8 @@ app.get("*", (req, res) => {
 if (isProduction) {
   console.log("In production environment, using HTTPS");
   const options = {
-    key: fs.readFileSync("/home/azureuser/educai/educaiCRM-Back/key.pem"),
-    cert: fs.readFileSync("/home/azureuser/educai/educaiCRM-Back/cert.pem"),
+    key: fs.readFileSync(path.join(__dirname, "key.pem")),
+    cert: fs.readFileSync(path.join(__dirname, "cert.pem")),
   };
   https.createServer(options, app).listen(PORT, () => {
     console.log(`HTTPS Server is running on port ${PORT}`);
