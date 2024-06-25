@@ -18,162 +18,71 @@ const surveyRoutes = require("./routes/surveyRoutes");
 
 dotenv.config();
 
-// HTTPS only if in production environment
-if (process.env.NODE_ENV !== "production") {
-  console.log("Not in production environment, using HTTP");
-  const app = express();
-  const PORT = process.env.PORT || 5050;
-  const mongo_login_string = process.env.mongo_login_string;
+const app = express();
+const PORT = process.env.PORT || 5050;
+const mongo_login_string = process.env.mongo_login_string;
 
-  // Connect to MongoDB
-  mongoose
-    .connect(mongo_login_string, {})
-    .then(() => {
-      console.log("Connected to MongoDB");
-    })
-    .catch((error) => {
-      console.error("MongoDB connection error:", error);
-    });
+const isProduction = process.env.NODE_ENV === "production";
 
-  // Enable CORS
-  app.use(
-    cors({
-      origin: "*",
-      methods: ["GET", "POST", "PUT", "DELETE"],
-    })
-  );
-
-  // Serve static files from the React app
-  app.use(
-    express.static(
-      path.join(__dirname, "../../../educaiCRM-Front/frontend/build")
-    )
-  );
-
-  // Middleware to parse JSON bodies
-  app.use(express.json());
-
-  // API Auth routes
-  app.use("/api/auth", authRoutes);
-
-  // API User routes
-  app.use("/api/user", userRoutes);
-
-  // API Program routes
-  app.use("/api/programs", programRoutes);
-
-  // API Course routes
-  app.use("/api/courses", courseRoutes);
-
-  // API Class routes
-  app.use("/api/classes", classRoutes);
-
-  // API Attendance routes
-  app.use("/api/attendance", attendanceRoutes);
-
-  // API Justification routes
-  app.use("/api/justifications", justificationRoutes);
-
-  // API Notification routes
-  app.use("/api/notifications", notificationRoutes);
-
-  // API Contact routes
-  app.use("/api/contact", contactRoutes);
-
-  // API Survey routes
-  app.use("/api/survey", surveyRoutes);
-
-  // Serve the React app
-  app.get("*", (req, res) => {
-    res.sendFile(
-      path.join(__dirname, "../../../educaiCRM-Front/frontend/build/index.html")
-    );
+// MongoDB Connection
+mongoose
+  .connect(mongo_login_string, {})
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch((error) => {
+    console.error("MongoDB connection error:", error);
   });
 
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
+// Enable CORS
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
 
-  return;
-} else {
+// Serve static files from the React app
+app.use(
+  express.static(
+    path.join(__dirname, "../../../educaiCRM-Front/frontend/build")
+  )
+);
+
+// Middleware to parse JSON bodies
+app.use(express.json());
+
+// API routes
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/programs", programRoutes);
+app.use("/api/courses", courseRoutes);
+app.use("/api/classes", classRoutes);
+app.use("/api/attendance", attendanceRoutes);
+app.use("/api/justifications", justificationRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/contact", contactRoutes);
+app.use("/api/survey", surveyRoutes);
+
+// Serve the React app
+app.get("*", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "../../../educaiCRM-Front/frontend/build/index.html")
+  );
+});
+
+if (isProduction) {
   console.log("In production environment, using HTTPS");
   const options = {
-    key: fs.readFileSync("/etc/letsencrypt/live/educaiapis.online/privkey.pem"),
-    cert: fs.readFileSync(
-      "/etc/letsencrypt/live/educaiapis.online/fullchain.pem"
-    ),
+    key: fs.readFileSync("/home/azureuser/educai/educaiCRM-Back/key.pem"),
+    cert: fs.readFileSync("/home/azureuser/educai/educaiCRM-Back/cert.pem"),
   };
-
-  const app = express();
-  const PORT = process.env.PORT || 5050;
-  const mongo_login_string = process.env.mongo_login_string;
-
-  // Connect to MongoDB
-  mongoose
-    .connect(mongo_login_string, {})
-    .then(() => {
-      console.log("Connected to MongoDB");
-    })
-    .catch((error) => {
-      console.error("MongoDB connection error:", error);
-    });
-
-  // Enable CORS
-  app.use(
-    cors({
-      origin: "*",
-      methods: ["GET", "POST", "PUT", "DELETE"],
-    })
-  );
-
-  // Serve static files from the React app
-  app.use(
-    express.static(
-      path.join(__dirname, "../../../educaiCRM-Front/frontend/build")
-    )
-  );
-
-  // Middleware to parse JSON bodies
-  app.use(express.json());
-
-  // API Auth routes
-  app.use("/api/auth", authRoutes);
-
-  // API User routes
-  app.use("/api/user", userRoutes);
-
-  // API Program routes
-  app.use("/api/programs", programRoutes);
-
-  // API Course routes
-  app.use("/api/courses", courseRoutes);
-
-  // API Class routes
-  app.use("/api/classes", classRoutes);
-
-  // API Attendance routes
-  app.use("/api/attendance", attendanceRoutes);
-
-  // API Justification routes
-  app.use("/api/justifications", justificationRoutes);
-
-  // API Notification routes
-  app.use("/api/notifications", notificationRoutes);
-
-  // API Contact routes
-  app.use("/api/contact", contactRoutes);
-
-  // API Survey routes
-  app.use("/api/survey", surveyRoutes);
-
-  // Serve the React app
-  app.get("*", (req, res) => {
-    res.sendFile(
-      path.join(__dirname, "../../../educaiCRM-Front/frontend/build/index.html")
-    );
+  https.createServer(options, app).listen(PORT, () => {
+    console.log(`HTTPS Server is running on port ${PORT}`);
   });
-
-  https.createServer(options, app).listen(5050, () => {
-    console.log("Server is running on port 5050");
+} else {
+  console.log("Not in production environment, using HTTP");
+  app.listen(PORT, () => {
+    console.log(`HTTP Server is running on port ${PORT}`);
   });
 }

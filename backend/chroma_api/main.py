@@ -5,7 +5,6 @@ from pydantic import BaseModel
 from chroma_store import chroma_doc_store
 import io
 import uvicorn
-import os
 
 app = FastAPI()
 
@@ -65,7 +64,6 @@ async def upload_text_document(document: Document):
 async def search_documents(query: Query):
     try:
         results = chroma_doc_store.search_documents(query.query)
-        print(results)
         return {"results": results}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -97,10 +95,14 @@ async def get_documents():
         raise HTTPException(status_code=500, detail=str(e))
     
 if __name__ == "__main__":
+    is_production = os.environ.get("NODE_ENV") == "production"
+    ssl_keyfile = "/home/azureuser/educai/educaiCRM-Back/key.pem"
+    ssl_certfile = "/home/azureuser/educai/educaiCRM-Back/cert.pem"
+    
     uvicorn.run(
         app,
         host="0.0.0.0",
         port=int(os.environ.get("PORT", 2525)),  # Adjust the port as needed
-        ssl_keyfile="/etc/letsencrypt/live/educaiapis.online/privkey.pem",
-        ssl_certfile="/etc/letsencrypt/live/educaiapis.online/fullchain.pem",
+        ssl_keyfile=ssl_keyfile if is_production else None,
+        ssl_certfile=ssl_certfile if is_production else None,
     )

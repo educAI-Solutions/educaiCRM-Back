@@ -50,10 +50,14 @@ async def chat(request: Request):
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
+    is_production = os.environ.get("NODE_ENV") == "production"
+    ssl_keyfile = "/home/azureuser/educai/educaiCRM-Back/key.pem"
+    ssl_certfile = "/home/azureuser/educai/educaiCRM-Back/cert.pem"
+    
     uvicorn.run(
         app,
         host="0.0.0.0",
         port=int(os.environ.get("PORT", 2020)),  # Adjust the port as needed
-        ssl_keyfile="/etc/letsencrypt/live/educaiapis.online/privkey.pem",
-        ssl_certfile="/etc/letsencrypt/live/educaiapis.online/fullchain.pem",
+        ssl_keyfile=ssl_keyfile if is_production else None,
+        ssl_certfile=ssl_certfile if is_production else None,
     )
