@@ -2,9 +2,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const fs = require("fs");
-const https = require("https");
-const path = require("path");
 
 const notificationRoutes = require("./routes/notificationRoutes"); // Adjust the path if necessary
 
@@ -13,7 +10,6 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.mongo_login_string;
-const isProduction = process.env.NODE_ENV === "production";
 
 // Connect to MongoDB
 mongoose
@@ -46,19 +42,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Something went wrong!" });
 });
 
-if (isProduction) {
-  console.log("In production environment, using HTTPS");
-  const options = {
-    key: fs.readFileSync(path.join(__dirname, "privkey.pem")),
-    cert: fs.readFileSync(path.join(__dirname, "fullchain.pem")),
-  };
-
-  https.createServer(options, app).listen(PORT, () => {
-    console.log(`HTTPS Server is running on port ${PORT}`);
-  });
-} else {
-  console.log("Not in production environment, using HTTP");
-  app.listen(PORT, () => {
-    console.log(`HTTP Server is running on port ${PORT}`);
-  });
-}
+app.listen(PORT, () => {
+  console.log(`HTTP Server is running on port ${PORT}`);
+});

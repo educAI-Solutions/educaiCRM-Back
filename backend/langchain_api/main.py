@@ -50,15 +50,8 @@ async def chat(request: Request):
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
-    is_production = os.environ.get("NODE_ENV") == "production"
-    # Directory for the keys that is the same as this file
-    ssl_keyfile = os.path.join(os.path.dirname(__file__), "privkey.pem")
-    ssl_certfile = os.path.join(os.path.dirname(__file__), "fullchain.pem")
-    
     uvicorn.run(
         app,
         host="0.0.0.0",
-        port=int(os.environ.get("PORT", 2020)),  # Adjust the port as needed
-        ssl_keyfile=ssl_keyfile if is_production else None,
-        ssl_certfile=ssl_certfile if is_production else None,
+        port=int(os.environ.get("PORT", 2020))  # Adjust the port as needed
     )

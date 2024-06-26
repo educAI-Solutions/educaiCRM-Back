@@ -1,16 +1,12 @@
 const express = require("express");
 const storageRoutes = require("./routes/storageRoutes");
 const cors = require("cors");
-const fs = require("fs");
 const dotenv = require("dotenv");
-const https = require("https");
-const path = require("path");
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 7070;
-const isProduction = process.env.NODE_ENV === "production";
 
 // Enable CORS
 app.use(
@@ -37,19 +33,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Something went wrong!" });
 });
 
-if (isProduction) {
-  console.log("In production environment, using HTTPS");
-  const options = {
-    key: fs.readFileSync(path.join(__dirname, "privkey.pem")),
-    cert: fs.readFileSync(path.join(__dirname, "fullchain.pem")),
-  };
-
-  https.createServer(options, app).listen(PORT, () => {
-    console.log(`HTTPS Server is running on port ${PORT}`);
-  });
-} else {
-  console.log("Not in production environment, using HTTP");
-  app.listen(PORT, () => {
-    console.log(`HTTP Server is running on port ${PORT}`);
-  });
-}
+app.listen(PORT, () => {
+  console.log(`HTTP Server is running on port ${PORT}`);
+});
