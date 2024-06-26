@@ -8,9 +8,12 @@ import uvicorn
 
 app = FastAPI()
 
+
 origins = [
     "http://localhost",
     "http://localhost:3000",  # Assuming your React app is running on port 3000
+    "https://educai.site",
+    "https://www.educai.site",
     # Add other origins as needed
 ]
 
