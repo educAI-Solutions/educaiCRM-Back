@@ -4,6 +4,7 @@ const router = express.Router();
 const {
   checkForUpcomingClasses,
   checkForUpcomingCourses,
+  checkForEndOfCourses
 } = require("../controllers/checkerController");
 
 // This endpoint can be used for manual checks if needed
