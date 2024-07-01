@@ -63,17 +63,5 @@ services:
       - backend-network
     privileged: true # Run this service in privileged mode
 
-  nginx:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile.nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
-    networks:
-      - backend-network
-
 networks:
   backend-network:
