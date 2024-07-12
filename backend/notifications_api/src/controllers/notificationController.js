@@ -30,7 +30,23 @@ exports.sendNotification = async (req, res) => {
       to: to,
       subject: subject,
       text: text,
-      html: `<h1>${text}</h1>`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; background-color: #f9f9f9;">
+          <div style="background-color: #007BFF; color: white; padding: 10px; border-radius: 10px 10px 0 0;">
+            <h1 style="margin: 0; font-size: 24px;">${subject}</h1>
+          </div>
+          <div style="padding: 20px;">
+            <p style="color: #333; line-height: 1.5;">${text}</p>
+            <div style="margin-top: 20px;">
+              <a href="https://educai.site" style="background-color: #007BFF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Visita nuestro sitio web</a>
+            </div>
+          </div>
+          <div style="padding: 10px; border-top: 1px solid #e0e0e0; text-align: center; color: #888; font-size: 12px;">
+            <p style="margin: 0;">EducAI CRM - Todos los derechos reservados</p>
+            <p style="margin: 0;">Este es un correo electrónico automatizado, por favor no responda.</p>
+          </div>
+        </div>
+      `,
     };
 
     await transporter.sendMail(mailOptions, function (error, info) {
@@ -60,11 +76,27 @@ exports.sendManualNotification = async (req, res) => {
     const text = content;
 
     const mailOptions = {
-      from: "Excited User",
+      from: "EducAI CRM <notifications@educai.site>",
       to: to,
       subject: subject,
       text: text,
-      html: "<h1>Testing some Mailgun awesomeness!</h1>",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; background-color: #f9f9f9;">
+          <div style="background-color: #007BFF; color: white; padding: 10px; border-radius: 10px 10px 0 0;">
+            <h1 style="margin: 0; font-size: 24px;">${subject}</h1>
+          </div>
+          <div style="padding: 20px;">
+            <p style="color: #333; line-height: 1.5;">${text}</p>
+            <div style="margin-top: 20px;">
+              <a href="https://educai.site" style="background-color: #007BFF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Visita nuestro sitio web</a>
+            </div>
+          </div>
+          <div style="padding: 10px; border-top: 1px solid #e0e0e0; text-align: center; color: #888; font-size: 12px;">
+            <p style="margin: 0;">EducAI CRM - Todos los derechos reservados</p>
+            <p style="margin: 0;">Este es un correo electrónico automatizado, por favor no responda.</p>
+          </div>
+        </div>
+      `,
     };
 
     await transporter.sendMail(mailOptions, function (error, info) {
