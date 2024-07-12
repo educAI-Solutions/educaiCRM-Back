@@ -28,6 +28,13 @@ router.post(
   upload.single("file"),
   storageController.uploadRules
 );
+router.post(
+  "/upload/qr-code",
+  // authenticateJWT,
+  // checkAdmin,
+  upload.single("file"),
+  storageController.uploadQRCode
+);
 router.get(
   "/download/attendance/:filename/:fileExtension",
   storageController.downloadAttendance
@@ -40,5 +47,7 @@ router.get(
   "/download/rules/:filename/:fileExtension",
   storageController.downloadRules
 );
+
+router.get("/download/qr-code/:filename", storageController.downloadQRCode);
 
 module.exports = router;

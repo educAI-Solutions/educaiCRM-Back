@@ -139,6 +139,49 @@ exports.downloadRules = async (req, res) => {
   }
 };
 
+exports.uploadQRCode = async (req, res) => {
+  try {
+    const { surveyId } = req.body;
+    console.log(`Uploading qr for class: ${surveyId}`);
+    const containerClient = blobServiceClient.getContainerClient("qrs");
+    const file = req.file;
+    // Name the blob the classId followed by the original file extension
+    const blobName = `${surveyId}.png`;
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    const stream = file.buffer;
+    console.log(`Uploading file: ${file.originalname}`);
+    const fileStream = Readable.from(stream);
+    await blockBlobClient.uploadStream(fileStream, file.size);
+    console.log(`File uploaded: ${file.originalname}`);
+    res.status(200).send("File uploaded successfully");
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    res.status(500).send("Internal server error");
+  }
+};
+
+exports.downloadQRCode = async (req, res) => {
+  try {
+    const containerClient = blobServiceClient.getContainerClient("qrs");
+    const filename = req.params.filename;
+    const file = `${filename}.png`;
+    const blockBlobClient = containerClient.getBlockBlobClient(file);
+
+    // Download the file as a stream
+    const downloadResponse = await blockBlobClient.download();
+
+    // Set the appropriate headers for binary data
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+
+    // Pipe the file stream to the response
+    downloadResponse.readableStreamBody.pipe(res);
+  } catch (error) {
+    console.error("Error downloading file:", error);
+    res.status(500).send("Internal server error");
+  }
+};
+
 async function streamToString(readableStream) {
   return new Promise((resolve, reject) => {
     const chunks = [];

@@ -11,6 +11,8 @@ const courseSchema = new mongoose.Schema({
   program: { type: mongoose.Schema.Types.ObjectId, ref: "Program" },
   classes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Class" }],
   state: { type: String, default: "active" }, // Assuming state can be "active" or "inactive"
+  alertedStart: { type: Boolean, default: false },
+  alertedTeacher: { type: Boolean, default: false },
 });
 
 const Course = mongoose.model("Course", courseSchema);

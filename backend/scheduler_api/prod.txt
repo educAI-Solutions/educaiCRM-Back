@@ -1,0 +1,4 @@
+PORT=9898
+MONGO_URI="mongodb+srv://test:test@educai-accounts-dev.7m2rs45.mongodb.net/?retryWrites=true&w=majority&appName=EducAI-Accounts-Dev"
+BACKEND_MONGO="https://www.educaiapis.online/mongo-api"
+FRONTEND_URL="https://www.educai.site"
