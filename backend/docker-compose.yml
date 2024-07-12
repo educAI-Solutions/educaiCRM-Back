@@ -55,6 +55,16 @@ services:
       - redis
     privileged: true # Run this service in privileged mode
 
+  scheduler_api:
+    build:
+      context: ./scheduler_api
+      dockerfile: Dockerfile
+    ports:
+      - "9898:9898"
+    networks:
+      - backend-network
+    privileged: true # Run this service in privileged mode
+
   redis:
     image: "redis:alpine"
     ports:

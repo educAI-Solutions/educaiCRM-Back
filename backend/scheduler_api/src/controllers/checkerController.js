@@ -8,7 +8,7 @@ dotenv.config();
 const checkForUpcomingClasses = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:5050/api/classes/get-all"
+      "http://mongo_api:5050/api/classes/get-all"
     );
     const classes = response.data.data;
 
@@ -59,7 +59,7 @@ const checkForUpcomingClasses = async () => {
       // Create a attendance survey for the participants of the class on the mongoapi
       try {
         surveyResponse_attendance = await axios.post(
-          "http://localhost:5050/api/survey/create-attendance-survey",
+          "http://mongo_api:5050/api/survey/create-attendance-survey",
           {
             classId: classItem._id,
             participants: participantIds,
@@ -75,7 +75,7 @@ const checkForUpcomingClasses = async () => {
       // Create a class survey for the teachers of the class on the mongoapi
       try {
         surveyResponse_class = await axios.post(
-          "http://localhost:5050/api/survey/create-class-survey",
+          "http://mongo_api:5050/api/survey/create-class-survey",
           {
             classId: classItem._id,
             participants: instructors,
@@ -91,7 +91,7 @@ const checkForUpcomingClasses = async () => {
       // Create a food survey for the participants of the class on the mongoapi
       try {
         surveyResponse_food = await axios.post(
-          "http://localhost:5050/api/survey/create-food-survey",
+          "http://mongo_api:5050/api/survey/create-food-survey",
           {
             classId: classItem._id,
             participants: participantIds,
@@ -107,7 +107,7 @@ const checkForUpcomingClasses = async () => {
       // Change the alertedAttendance and alertedClass fields to true
       try {
         const updateResponse = await axios.put(
-          `http://localhost:5050/api/classes/update/${classItem._id}`,
+          `http://mongo_api:5050/api/classes/update/${classItem._id}`,
           {
             alertedAttendance: true,
             alertedClass: true,
@@ -139,7 +139,7 @@ const checkForUpcomingClasses = async () => {
           classId: classItem.course.classes._id, // I'm not sure, please check
         };
         const response = await axios.post(
-          "http://localhost:5050/api/notifications/",
+          "http://mongo_api:5050/api/notifications/",
           notification
         );
         notificationIds.push(response.data.data._id);
@@ -157,7 +157,7 @@ const checkForUpcomingClasses = async () => {
           classId: classItem.course.classes._id, // I'm not sure, please check
         };
         const response = await axios.post(
-          "http://localhost:5050/api/notifications/",
+          "http://mongo_api:5050/api/notifications/",
           notification
         );
         notificationIds.push(response.data.data._id);
@@ -197,7 +197,7 @@ const checkForUpcomingClasses = async () => {
         formData.append("surveyId", surveyResponse_attendance.data.surveyId);
 
         const attendanceSurveyResponse = await axios.post(
-          "http://localhost:7070/storage/upload/qr-code",
+          "http://storage_api:7070/storage/upload/qr-code",
           formData,
           {
             headers: {
@@ -220,7 +220,7 @@ const checkForUpcomingClasses = async () => {
 const checkForUpcomingCourses = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:5050/api/courses/get-all"
+      "http://mongo_api:5050/api/courses/get-all"
     );
     const courses = response.data.data;
 
@@ -263,7 +263,7 @@ const checkForUpcomingCourses = async () => {
           courseId: course._id,
         };
         const response = await axios.post(
-          "http://localhost:5050/api/notifications/",
+          "http://mongo_api:5050/api/notifications/",
           notification
         );
         notificationIds.push(response.data.data._id);
@@ -279,7 +279,7 @@ const checkForUpcomingCourses = async () => {
           courseId: course._id,
         };
         const response = await axios.post(
-          "http://localhost:5050/api/notifications/",
+          "http://mongo_api:5050/api/notifications/",
           notification
         );
         notificationIds.push(response.data.data._id);
@@ -302,7 +302,7 @@ const checkForUpcomingCourses = async () => {
       // change the alertedStart field to true
       try {
         const updateResponse = await axios.put(
-          `http://localhost:5050/api/courses/update/${course._id}`,
+          `http://mongo_api:5050/api/courses/update/${course._id}`,
           {
             alertedStart: true,
           }
@@ -326,7 +326,7 @@ const checkForUpcomingCourses = async () => {
 const checkForEndOfCourses = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:5050/api/courses/get-all"
+      "http://mongo_api:5050/api/courses/get-all"
     );
     const courses = response.data.data;
 
@@ -392,7 +392,7 @@ const checkForEndOfCourses = async () => {
 
       try {
         surveyResponse_teacher = await axios.post(
-          "http://localhost:5050/api/survey/create-teacher-survey",
+          "http://mongo_api:5050/api/survey/create-teacher-survey",
           {
             courseId: course._id,
             participants: participantIds,
@@ -417,7 +417,7 @@ const checkForEndOfCourses = async () => {
           courseId: course._id,
         };
         const response = await axios.post(
-          "http://localhost:5050/api/notifications/",
+          "http://mongo_api:5050/api/notifications/",
           notification
         );
         notificationIds.push(response.data.data._id);
@@ -437,7 +437,7 @@ const checkForEndOfCourses = async () => {
         // Change the alertedTeacher field to true
         try {
           const updateResponse = await axios.put(
-            `http://localhost:5050/api/courses/update/${course._id}`,
+            `http://mongo_api:5050/api/courses/update/${course._id}`,
             {
               alertedTeacher: true,
             }
@@ -462,13 +462,13 @@ const checkForEndOfCourses = async () => {
       try {
         // Get the survey teacher IDs for the course
         const surveyTeacherResponse = await axios.get(
-          `http://localhost:5050/api/survey/get-teacher-survey/${course._id}`
+          `http://mongo_api:5050/api/survey/get-teacher-survey/${course._id}`
         );
         const surveyId = surveyTeacherResponse.data.surveyId;
 
         // Update the weekNumber field for the teacher survey
         const updateResponse = await axios.put(
-          `http://localhost:5050/api/survey/update/${surveyId}`,
+          `http://mongo_api:5050/api/survey/update/${surveyId}`,
           {
             weekNumber,
           }
@@ -489,7 +489,7 @@ const checkForEndOfCourses = async () => {
 const sendTeacherSurveyReminders = async (weekNumber) => {
   try {
     const response = await axios.get(
-      "http://localhost:5050/api/survey/get-all-teacher-surveys"
+      "http://mongo_api:5050/api/survey/get-all-teacher-surveys"
     );
     const surveys = response.data.data;
 
@@ -514,7 +514,7 @@ const sendTeacherSurveyReminders = async (weekNumber) => {
           courseId: survey.courseId,
         };
         const response = await axios.post(
-          "http://localhost:5050/api/notifications/",
+          "http://mongo_api:5050/api/notifications/",
           notification
         );
         notificationIds.push(response.data.data._id);
@@ -524,7 +524,7 @@ const sendTeacherSurveyReminders = async (weekNumber) => {
         // Get the id of the notification created
         for (const notificationId of notificationIds) {
           const notificationSentResponse = await axios.post(
-            "http://localhost:9090/notifications",
+            "http://notifications_api:9090/notifications",
             {
               id: notificationId,
             }
