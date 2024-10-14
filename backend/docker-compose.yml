@@ -9,7 +9,7 @@ services:
       - "5050:5050"
     networks:
       - backend-network
-    privileged: true
+    privileged: true # Run this service in privileged mode
 
   notifications_api:
     build:
@@ -19,7 +19,7 @@ services:
       - "9090:9090"
     networks:
       - backend-network
-    privileged: true
+    privileged: true # Run this service in privileged mode
 
   storage_api:
     build:
@@ -29,7 +29,7 @@ services:
       - "7070:7070"
     networks:
       - backend-network
-    privileged: true
+    privileged: true # Run this service in privileged mode
 
   chroma_api:
     build:
@@ -39,15 +39,10 @@ services:
       - "2525:2525"
     networks:
       - backend-network
-    privileged: true
+    privileged: true # Run this service in privileged mode
     depends_on:
       - redis
       - postgres
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:2525 || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
 
   langchain_api:
     build:
@@ -60,7 +55,7 @@ services:
     depends_on:
       - redis
       - postgres
-    privileged: true
+    privileged: true # Run this service in privileged mode
 
   scheduler_api:
     build:
@@ -70,10 +65,7 @@ services:
       - "9898:9898"
     networks:
       - backend-network
-    privileged: true
-    depends_on:
-      - redis
-      - postgres
+    privileged: true # Run this service in privileged mode
 
   redis:
     image: "redis:alpine"
@@ -81,7 +73,7 @@ services:
       - "6379:6379"
     networks:
       - backend-network
-    privileged: true
+    privileged: true # Run this service in privileged mode
 
   postgres:
     image: "postgres:13-alpine"
@@ -95,7 +87,6 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - backend-network
-
   nginx:
     build:
       context: ./nginx
