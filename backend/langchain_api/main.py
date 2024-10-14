@@ -14,6 +14,7 @@ origins = [
     "http://localhost:3000",  # Assuming your React app is running on port 3000
     "https://educai.site",
     "https://www.educai.site",
+    "https://delightful-field-0a372d61e.5.azurestaticapps.net"
 ]
 
 app.add_middleware(
