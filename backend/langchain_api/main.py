@@ -14,7 +14,6 @@ origins = [
     "http://localhost:3000",  # Assuming your React app is running on port 3000
     "https://educai.site",
     "https://www.educai.site",
-    # Add other origins as needed
 ]
 
 app.add_middleware(
@@ -43,17 +42,22 @@ async def chat(request: Request):
     data = await request.json()
     user_message = data.get("message")
     chat_id = data.get("chat_id")
+    program_uuid = data.get("programId")  # Capture program_uuid from the request
+
     if not chat_id:
         chat_id = str(uuid.uuid4())
+
     try:
-        response = chat_controller.chat_with_history(chat_id, user_message)
-        return {"chat_id": chat_id, "reply": response}
+        # Pass program_uuid to chat_with_history for program-specific vector store logic
+        response = chat_controller.chat_with_history(chat_id, user_message, program_uuid)
+        return {"chat_id": chat_id, "program_uuid": program_uuid, "reply": response}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 if __name__ == "__main__":
     uvicorn.run(
         app,
         host="0.0.0.0",
-        port=int(os.environ.get("PORT", 2020))  # Adjust the port as needed
+        port=int(os.environ.get("PORT", 2020))  # Adjust port as needed
     )

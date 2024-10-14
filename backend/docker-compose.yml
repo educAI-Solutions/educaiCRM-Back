@@ -73,5 +73,16 @@ services:
       - backend-network
     privileged: true # Run this service in privileged mode
 
+  postgres:
+    image: "postgres:13-alpine"
+    environment:
+      POSTGRES_USER: your_user
+      POSTGRES_PASSWORD: your_password
+      POSTGRES_DB: chat_history_db
+    ports:
+      - "5432:5432"
+    networks:
+      - backend-network
+
 networks:
   backend-network:

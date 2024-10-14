@@ -44,4 +44,11 @@ router.delete(
   accountController.deleteUser
 );
 
+// Get user program route
+router.get(
+  "/program/:userId",
+  // authenticateJWT,
+  accountController.getUserProgram
+);
+
 module.exports = router;
