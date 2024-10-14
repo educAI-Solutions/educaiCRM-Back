@@ -44,10 +44,28 @@ class ChatController:
                 password=os.getenv("POSTGRES_PASSWORD", "your_password"),
                 host="postgres"
             )
+            # Ensure the chat_histories table exists
+            self._create_chat_history_table()
+            
             logger.info("ChatController initialized successfully.")
         except Exception as e:
             logger.error(f"Error during ChatController initialization: {e}")
             raise
+        
+    def _create_chat_history_table(self):
+        try:
+            with self.get_postgres_cursor() as cursor:
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS chat_histories (
+                        chat_id UUID PRIMARY KEY,
+                        chat_data JSONB NOT NULL
+                    );
+                """)
+            logger.info("Ensured that chat_histories table exists.")
+        except Exception as e:
+            logger.error(f"Error creating chat_histories table: {e}")
+            raise
+
 
     @contextmanager
     def get_postgres_cursor(self):
